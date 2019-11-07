@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="songNameSize">24sp</dimen>
+    <dimen name="authorTextSize">18sp</dimen>
+    <dimen name="cdPadding">50dp</dimen>
+    <dimen name="cdSize">300dp</dimen>
+    <dimen name="sideBtnSize">70dp</dimen>
+    <dimen name="playBtnSize">90dp</dimen>
+    <dimen name="progressBarPadding">20dp</dimen>
+</resources>

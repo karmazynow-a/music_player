@@ -1,3 +1,8 @@
 <resources>
-    <string name="app_name">MusicPlayer</string>
+    <string name="app_name">Music Player</string>
+    <string name="chooseSourceBtnDescp">Wybierz folder z muzyką</string>
+    <string name="themeBtnDescp">Motyw</string>
+    <string name="accentColorDescp">Kolor akcentu</string>
+    <string name="songNameDefault">NazwaPiosenki</string>
+    <string name="authorNameDefault">Autor</string>
 </resources>

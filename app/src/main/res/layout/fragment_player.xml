@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools">
+    <data>
+
+    </data>
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context=".PlayerFragment"
+            tools:layout="@layout/fragment_player"
+            android:orientation="vertical">
+
+        <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_cd"
+                android:id="@+id/imageView"
+                tools:ignore="Suspicious0dp" android:padding="@dimen/cdPadding"
+                android:layout_gravity="clip_horizontal|center|center_horizontal"/>
+
+        <TextView
+                android:text="@string/songNameDefault"
+                android:id="@+id/songName"
+                android:textSize="@dimen/songNameSize" style="@style/playerText"/>
+        <TextView
+                android:text="@string/authorNameDefault"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/authorName" style="@style/playerText"
+                android:textSize="@dimen/authorTextSize"/>
+        <ProgressBar
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:id="@+id/progressBar"
+                android:padding="@dimen/progressBarPadding"
+        />
+        <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:textAlignment="center" android:layout_gravity="center_horizontal"
+                android:gravity="center_horizontal|center_vertical">
+
+            <ImageButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" app:srcCompat="@drawable/ic_previous"
+                    android:id="@+id/prevBtn" android:layout_weight="1" style="@style/btnPlayerStyle"/>
+            <ImageButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" app:srcCompat="@drawable/ic_play"
+                    android:id="@+id/playBtn" android:layout_weight="1" style="@style/btnPlayerStyle"/>
+            <ImageButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" app:srcCompat="@drawable/ic_next"
+                    android:id="@+id/nextBtn" android:layout_weight="1" style="@style/btnPlayerStyle"/>
+        </TableRow>
+
+    </LinearLayout>
+</layout>
