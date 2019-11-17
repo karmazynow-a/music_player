@@ -2,10 +2,7 @@ package com.example.musicplayer
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.graphics.PorterDuff
-import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -13,15 +10,8 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.findNavController
-import com.example.musicplayer.databinding.FragmentThemeBinding
-
 
 class ThemeFragment : Fragment() {
-
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -52,7 +42,7 @@ class ThemeFragment : Fragment() {
         return binding.root
     }
 
-    fun changeTheme(theme : Int, view : View){
+    private fun changeTheme(theme : Int, view : View){
         val sharedPref: SharedPreferences = activity!!.getPreferences(Context.MODE_PRIVATE)
         val editor: SharedPreferences.Editor = sharedPref.edit()
         editor.putInt("theme", theme)
@@ -60,5 +50,4 @@ class ThemeFragment : Fragment() {
         (activity as AppCompatActivity).recreate()
         view.findNavController().navigate(R.id.action_themeFragment_to_playerFragment)
     }
-
 }

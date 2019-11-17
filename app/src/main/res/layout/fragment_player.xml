@@ -35,6 +35,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/authorName" style="@style/playerText"
                 android:textSize="@dimen/authorTextSize"/>
+
         <ProgressBar
                 style="?android:attr/progressBarStyleHorizontal"
                 android:layout_height="wrap_content"

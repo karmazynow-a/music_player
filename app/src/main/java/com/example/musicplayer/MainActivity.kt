@@ -2,11 +2,12 @@ package com.example.musicplayer
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.MenuItem
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.drawerlayout.widget.DrawerLayout
@@ -14,9 +15,6 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.NavigationUI
 import com.example.musicplayer.databinding.ActivityMainBinding
 import com.google.android.material.navigation.NavigationView
-import androidx.lifecycle.ViewModel
-
-
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -47,7 +45,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         NavigationUI.setupWithNavController(binding.navView, navController)
         //set on item in drawer selected
         binding.navView.setNavigationItemSelectedListener(this)
-    }
+
+        //ask for data storage permission
+        val permissions = arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE)
+        ActivityCompat.requestPermissions(this, permissions,0)
+        }
 
     override fun onSupportNavigateUp(): Boolean {
         val navController = this.findNavController(R.id.myNavHostFragment)
