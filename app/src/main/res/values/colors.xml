@@ -1,6 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#008577</color>
+    <color name="colorPrimary">@color/teal</color>
     <color name="colorPrimaryDark">#00574B</color>
-    <color name="colorAccent">#D81B60</color>
+    <color name="colorAccent">@color/deep_purple</color>
+
+    <color name="teal">#009688</color>
+    <color name="blue">#1a617c</color>
+    <color name="indigo">#3F51B5</color>
+    <color name="deep_purple">#673AB7</color>
+    <color name="pink">#E91E63</color>
+    <color name="coral">#e25041</color>
+    <color name="orange">#FF9800</color>
+    <color name="amber">#FFC107</color>
+    <color name="blue_grey">#607D8B</color>
+    <color name="themeBackground">#212121</color>
+
+    <!--gradients from https://uigradients.com/
+    other possible gradients:
+        https://uigradients.com/#Tranquil
+        https://uigradients.com/#Disco
+        https://uigradients.com/#Firewatch
+        https://uigradients.com/#Lush
+    -->
+
+    <color name="pastel_purple"> #8589bd</color>
+    <color name="janipur1">#c5796d</color>
+    <color name="janipur2">#DBE6F6</color>
+    <color name="mild1"> #67b26f </color>
+    <color name="mild2">#4ca2cd </color>
+    <color name="radar1">#A770EF</color>
+    <color name="radar2">#fdb99b</color>
+    <color name="brady1"> #00c3ff </color>
+    <color name="brady2">#ffff1c </color>
+    <color name="shades1">#bdc3c7</color>
+    <color name="shades2">#2c3e50</color>
+    <color name="sun1">#fceabb </color>
+    <color name="sun2">#f8b500 </color>
+    <color name="morning1"> #ff5f6d </color>
+    <color name="morning2">#ffc371 </color>
+    <color name="forrest1"> #5a3f37 </color>
+    <color name="forrest2">#2c7744</color>
+
+    <color name="transparent">@android:color/transparent</color>
+
 </resources>

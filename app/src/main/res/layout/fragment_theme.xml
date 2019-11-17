@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools">
+    <data>
+
+    </data>
+
+    <TableLayout android:layout_width="match_parent"
+                 android:layout_height="match_parent"
+                 android:gravity="center"
+                 tools:context=".ThemeFragment"
+                 android:background="@color/themeBackground">
+
+        <TableRow android:gravity="center_horizontal">
+            <ImageButton
+                    android:id="@+id/theme_cosmic"
+                    android:src="@drawable/ic_cd_theme_cosmic"
+                    style="@style/themeCD"/>
+            <ImageButton
+                    android:id="@+id/theme_pt"
+                    android:src="@drawable/ic_cd_theme_pt"
+                    style="@style/themeCD"/>
+            <ImageButton
+                    android:id="@+id/theme_mild"
+                    android:src="@drawable/ic_cd_theme_mild"
+                    style="@style/themeCD"/>
+
+        </TableRow>
+        <TableRow android:gravity="center_horizontal">
+            <ImageButton
+                    android:id="@+id/theme_pa"
+                    android:src="@drawable/ic_cd_theme_pa"
+                    style="@style/themeCD"/>
+            <ImageButton
+                    android:id="@+id/theme_sun"
+                    android:src="@drawable/ic_cd_theme_sun"
+                    style="@style/themeCD"/>
+
+            <ImageButton
+                    android:id="@+id/theme_brady"
+                    android:src="@drawable/ic_cd_theme_brady"
+                    style="@style/themeCD"/>
+
+        </TableRow>
+        <TableRow android:gravity="center_horizontal">
+            <ImageButton
+                    android:id="@+id/theme_morning"
+                    android:src="@drawable/ic_cd_theme_morning"
+                    style="@style/themeCD"/>
+            <ImageButton
+                    android:id="@+id/theme_radar"
+                    android:src="@drawable/ic_cd_theme_radar"
+                    style="@style/themeCD"/>
+            <ImageButton
+                    android:id="@+id/theme_janipur"
+                    android:src="@drawable/ic_cd_theme_janipur"
+                    style="@style/themeCD"/>
+        </TableRow>
+        <TableRow android:gravity="center_horizontal">
+            <ImageButton
+                    android:id="@+id/theme_bg"
+                    android:src="@drawable/ic_cd_theme_grey"
+                    style="@style/themeCD"/>
+
+            <ImageButton
+                    android:id="@+id/theme_dawn"
+                    android:src="@drawable/ic_cd_theme_dawn"
+                    style="@style/themeCD"/>
+
+
+            <ImageButton
+                    android:id="@+id/theme_forrest"
+                    android:src="@drawable/ic_cd_theme_forrest"
+                    style="@style/themeCD"/>
+        </TableRow>
+
+    </TableLayout>
+</layout>

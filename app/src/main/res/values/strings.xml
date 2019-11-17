@@ -3,6 +3,10 @@
     <string name="chooseSourceBtnDescp">Wybierz folder z muzyką</string>
     <string name="themeBtnDescp">Motyw</string>
     <string name="accentColorDescp">Kolor akcentu</string>
-    <string name="songNameDefault">NazwaPiosenki</string>
-    <string name="authorNameDefault">Autor</string>
+    <string name="songNameDefault">Nazwa</string>
+    <string name="authorNameDefault">Nieznany</string>
+    <string name="preference_file_key">preferences</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

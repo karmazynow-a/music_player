@@ -1,22 +1,95 @@
 <resources>
-
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="Base.Theme.App" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="actionBarStyle">@style/playerActionBar</item>
+        <item name="windowActionBarOverlay">true</item>
+    </style>
+
+    <style name="Gradient.Theme.Teal" parent="Base.Theme.App">
+        <item name="colorPrimary">@color/teal</item>
+        <item name="colorAccent">@color/deep_purple</item>
+    </style>
+
+    <style name="Gradient.Theme.Pink" parent="Base.Theme.App">
+        <item name="colorPrimary">@color/amber</item>
+        <item name="colorAccent">@color/pink</item>
+    </style>
+
+    <style name="Gradient.Theme.Grey" parent="Base.Theme.App">
+        <item name="colorPrimary">@color/shades1</item>
+        <item name="colorAccent">@color/shades2</item>
+    </style>
+
+    <style name="Gradient.Theme.Cosmic" parent="Base.Theme.App">
+        <item name="colorPrimary">@color/pink</item>
+        <item name="colorAccent">@color/indigo</item>
+    </style>
+
+    <style name="Gradient.Theme.Mild" parent="Base.Theme.App">
+        <item name="colorPrimary">@color/mild1</item>
+        <item name="colorAccent">@color/mild2</item>
+    </style>
+
+    <style name="Gradient.Theme.Dawn" parent="Base.Theme.App">
+        <item name="colorPrimary">@color/coral</item>
+        <item name="colorAccent">@color/indigo</item>
+    </style>
+
+    <style name="Gradient.Theme.Janipur" parent="Base.Theme.App">
+        <item name="colorPrimary">@color/janipur2</item>
+        <item name="colorAccent">@color/janipur1</item>
+    </style>
+
+    <style name="Gradient.Theme.Radar" parent="Base.Theme.App">
+        <item name="colorPrimary">@color/radar2</item>
+        <item name="colorAccent">@color/radar1</item>
+    </style>
+
+    <style name="Gradient.Theme.Brady" parent="Base.Theme.App">
+        <item name="colorPrimary">@color/brady2</item>
+        <item name="colorAccent">@color/brady1</item>
+    </style>
+
+    <style name="Gradient.Theme.Sun" parent="Base.Theme.App">
+        <item name="colorPrimary">@color/sun1</item>
+        <item name="colorAccent">@color/sun2</item>
+    </style>
+
+    <style name="Gradient.Theme.Morning" parent="Base.Theme.App">
+        <item name="colorPrimary">@color/morning2</item>
+        <item name="colorAccent">@color/morning1</item>
+    </style>
+
+    <style name="Gradient.Theme.Forrest" parent="Base.Theme.App">
+        <item name="colorPrimary">@color/forrest2</item>
+        <item name="colorAccent">@color/forrest1</item>
+    </style>
+
+    <style name="playerActionBar" parent="Widget.AppCompat.Light.ActionBar.Solid">
+        <item name="android:background">@null</item>
+        <!-- Support library compatibility -->
+        <item name="background">@null</item>
     </style>
 
     <style name="btnPlayerStyle">
         <item name="android:background">@android:color/transparent</item>
         <item name="android:layout_width">70dp</item>
     </style>
+
     <style name="playerText">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textAlignment">center</item>
         <item name="android:fontFamily">@font/roboto</item>
     </style>
+    <style name="themeCD">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@color/transparent</item>
+        <item name="android:padding">@dimen/themeCDpadding</item>
+    </style>
+
 
 </resources>

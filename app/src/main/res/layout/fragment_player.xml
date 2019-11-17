@@ -5,24 +5,30 @@
 
     </data>
     <LinearLayout
+            android:id="@+id/playerLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:context=".PlayerFragment"
             tools:layout="@layout/fragment_player"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:background="@drawable/background_gradient"
+            >
 
         <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:srcCompat="@drawable/ic_cd"
                 android:id="@+id/imageView"
-                tools:ignore="Suspicious0dp" android:padding="@dimen/cdPadding"
-                android:layout_gravity="clip_horizontal|center|center_horizontal"/>
+                tools:ignore="Suspicious0dp"
+                android:layout_gravity="clip_horizontal|center|center_horizontal"
+                android:paddingStart="@dimen/cdPadding" android:paddingBottom="@dimen/cdPadding"
+                android:paddingTop="@dimen/cdPaddingTop" android:paddingEnd="@dimen/cdPadding"/>
 
         <TextView
                 android:text="@string/songNameDefault"
                 android:id="@+id/songName"
                 android:textSize="@dimen/songNameSize" style="@style/playerText"/>
+
         <TextView
                 android:text="@string/authorNameDefault"
                 android:layout_width="match_parent"
