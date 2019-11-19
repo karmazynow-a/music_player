@@ -24,7 +24,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        //setTheme(R.style.gradient_t_dp)
         val sharedPref : SharedPreferences = getPreferences( Context.MODE_PRIVATE)
         if (sharedPref.getInt("theme", 0) == 0){
             val editor: SharedPreferences.Editor = sharedPref.edit()
@@ -41,8 +40,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         //add hamburger
         NavigationUI.setupActionBarWithNavController(this,navController, drawerLayout)
+
         //set drawer
         NavigationUI.setupWithNavController(binding.navView, navController)
+
         //set on item in drawer selected
         binding.navView.setNavigationItemSelectedListener(this)
 
@@ -69,4 +70,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             super.onBackPressed()
         }
     }
+}
+
+fun getNameFromPath(name : String) : String {
+    return name.split("/").last().split(".").first()
 }

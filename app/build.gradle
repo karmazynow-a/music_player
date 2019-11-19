@@ -5,6 +5,8 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 
+apply plugin: "androidx.navigation.safeargs"
+
 android {
     compileSdkVersion 28
     buildToolsVersion "29.0.0"
@@ -48,4 +50,5 @@ dependencies {
     implementation "com.google.android.material:material:$supportlibVersion"
     implementation 'com.android.support:cardview-v7:28.0.0'
     implementation 'com.jakewharton.timber:timber:4.7.1'
+
 }
