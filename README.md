@@ -1,2 +1,2 @@
-# music_player
-Music player Android app
+# music player
+Music player Android app in Kotlin
