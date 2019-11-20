@@ -3,6 +3,7 @@ package com.example.musicplayer
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.os.Environment
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -31,12 +32,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         super.onCreate(savedInstanceState)
 
         val sharedPref : SharedPreferences = getPreferences( Context.MODE_PRIVATE)
+        val editor: SharedPreferences.Editor = sharedPref.edit()
         if (sharedPref.getInt("theme", 0) == 0){
-            val editor: SharedPreferences.Editor = sharedPref.edit()
             editor.putInt("theme", R.style.Gradient_Theme_Teal)
-            editor.putString("path", "/sdcard/")
-            editor.apply()
         }
+        if (sharedPref.getString("path", "").isNullOrEmpty()){
+            editor.putString("path", Environment.getExternalStorageDirectory().path)
+        }
+        editor.apply()
 
         setTheme(sharedPref.getInt("theme", 0))
 
@@ -55,7 +58,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         binding.navView.setNavigationItemSelectedListener(this)
 
         //load currentSongs
-        getAllSongs(sharedPref.getString("theme", "/sdcard/"))
+        getAllSongs(sharedPref.getString("path", Environment.getExternalStorageDirectory().path)!!)
 
         //ask for data storage permission
         val permissions = arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE)

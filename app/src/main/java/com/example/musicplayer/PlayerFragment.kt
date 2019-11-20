@@ -2,6 +2,7 @@ package com.example.musicplayer
 
 import android.Manifest
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.drawable.ColorDrawable
@@ -26,11 +27,12 @@ import androidx.fragment.app.Fragment
 import com.example.musicplayer.databinding.FragmentPlayerBinding
 import timber.log.Timber
 import java.io.File
+import java.lang.IllegalStateException
 
 class PlayerFragment : Fragment() {
 
     private lateinit var binding : FragmentPlayerBinding
-    private lateinit var mediaPlayer : MediaPlayer
+    private var mediaPlayer : MediaPlayer = MediaPlayer()
     private var currentSong : String = ""
     private var isPlaying : Boolean = false
     private var songProgress : Int = 0
@@ -58,9 +60,7 @@ class PlayerFragment : Fragment() {
         val args = PlayerFragmentArgs.fromBundle(arguments!!)
         currentSong = args.songPath
 
-        mediaPlayer = MediaPlayer()
-
-        load()
+        if (!mediaPlayer.isPlaying) load()
 
         return binding.root
     }
@@ -75,7 +75,7 @@ class PlayerFragment : Fragment() {
             ActivityCompat.requestPermissions(this.requireActivity(), permissions,0)
         }
         else {
-            enableBtns(false)
+            if (::binding.isInitialized) enableBtns(false)
 
             val songFile = File(currentSong)
             if (songFile.exists()) {
@@ -85,14 +85,7 @@ class PlayerFragment : Fragment() {
                 mediaPlayer.setOnPreparedListener{onInitPrepared()}
                 mediaPlayer.prepareAsync()
 
-                var mediaMetadataRetriever = MediaMetadataRetriever()
-                mediaMetadataRetriever.setDataSource(currentSong)
-                var author = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST)
-                if (author.isNullOrEmpty()) author = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUMARTIST)
-                binding.authorName.text = if (author.isNullOrEmpty()) "Nieznany" else author
-
-                val name = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE)
-                binding.songName.text = if (name.isNullOrEmpty()) getNameFromPath(currentSong) else name
+                if (::binding.isInitialized) setSongInfo()
 
                 Timber.d("Preparing")
             } else {
@@ -107,19 +100,25 @@ class PlayerFragment : Fragment() {
 
         //preparing based on previous state
         //TODO - change according to real state
-        start()
+        if (!mediaPlayer.isPlaying) start()
 
         //progress bar
         val updateSeekBarTime = object: Runnable {
             override fun run() {
-                if (mediaPlayer.isPlaying) {
-                    songProgress = mediaPlayer.getCurrentPosition()
-                    val finalTime = mediaPlayer.getDuration()
+                try {
+                    if (mediaPlayer.isPlaying) {
+                        songProgress = mediaPlayer.getCurrentPosition()
+                        val finalTime = mediaPlayer.getDuration()
 
-                    binding.progressBar.setProgress(songProgress * 100 / finalTime)
+                        binding.progressBar.setProgress(songProgress * 100 / finalTime)
+                    }
+
+                    //repeat yourself that again in 100 miliseconds
+                    durationHandler.postDelayed(this, 100)
                 }
-                //repeat yourself that again in 100 miliseconds
-                durationHandler.postDelayed(this, 100)
+                catch (e : IllegalStateException) {
+                    Timber.d("MusicPlayer is released - illegal state")
+                }
             }
         }
 
@@ -185,6 +184,17 @@ class PlayerFragment : Fragment() {
             mediaPlayer.reset()
             load()
         }
+    }
+
+    private fun setSongInfo() {
+        var mediaMetadataRetriever = MediaMetadataRetriever()
+        mediaMetadataRetriever.setDataSource(currentSong)
+        var author = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST)
+        if (author.isNullOrEmpty()) author = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUMARTIST)
+        binding.authorName.text = if (author.isNullOrEmpty()) "Nieznany" else author
+
+        val name = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE)
+        binding.songName.text = if (name.isNullOrEmpty()) getNameFromPath(currentSong) else name
     }
 
     private fun enableBtns ( enable : Boolean ){
