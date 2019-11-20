@@ -27,9 +27,6 @@ import com.example.musicplayer.databinding.FragmentPlayerBinding
 import timber.log.Timber
 import java.io.File
 
-const val KEY_CURRENT_SONG= "current_song_key"
-const val KEY_IS_PLAYING= "in_playing_key"
-
 class PlayerFragment : Fragment() {
 
     private lateinit var binding : FragmentPlayerBinding
@@ -38,15 +35,6 @@ class PlayerFragment : Fragment() {
     private var isPlaying : Boolean = false
     private var songProgress : Int = 0
     private lateinit var durationHandler : Handler
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        if (savedInstanceState != null) {
-            currentSong = savedInstanceState.getString(KEY_CURRENT_SONG, "")
-            isPlaying = savedInstanceState.getBoolean(KEY_IS_PLAYING, false)
-        }
-
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -58,7 +46,10 @@ class PlayerFragment : Fragment() {
             R.layout.fragment_player, container, false
         )
 
-        binding.playBtn.isEnabled = false
+        enableBtns (false)
+        binding.playBtn.setOnClickListener { play() }
+        binding.nextBtn.setOnClickListener { next() }
+        binding.prevBtn.setOnClickListener { prev() }
 
         //navbar styling
         (activity as AppCompatActivity).supportActionBar?.title = ""
@@ -75,7 +66,6 @@ class PlayerFragment : Fragment() {
     }
 
     private fun load (){
-        binding.playBtn.isEnabled = false
         if (ContextCompat.checkSelfPermission( context!!, Manifest.permission.READ_EXTERNAL_STORAGE)
             != PackageManager.PERMISSION_GRANTED){
             Toast.makeText(context, "Brak zezwolenia na dostęp do dysku", Toast.LENGTH_SHORT).show()
@@ -85,6 +75,8 @@ class PlayerFragment : Fragment() {
             ActivityCompat.requestPermissions(this.requireActivity(), permissions,0)
         }
         else {
+            enableBtns(false)
+
             val songFile = File(currentSong)
             if (songFile.exists()) {
                 val uri = Uri.fromFile(songFile)
@@ -95,7 +87,8 @@ class PlayerFragment : Fragment() {
 
                 var mediaMetadataRetriever = MediaMetadataRetriever()
                 mediaMetadataRetriever.setDataSource(currentSong)
-                val author = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST)
+                var author = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST)
+                if (author.isNullOrEmpty()) author = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUMARTIST)
                 binding.authorName.text = if (author.isNullOrEmpty()) "Nieznany" else author
 
                 val name = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE)
@@ -112,15 +105,9 @@ class PlayerFragment : Fragment() {
     private fun onInitPrepared (){
         Timber.d("Player is prepared to initialization")
 
-        //set normal onPrepared
-        mediaPlayer.setOnPreparedListener{onPrepared()}
-
         //preparing based on previous state
         //TODO - change according to real state
-        Timber.d("Start")
-        mediaPlayer.start()
-        isPlaying = true
-        binding.playBtn.setImageResource(R.drawable.ic_pause)
+        start()
 
         //progress bar
         val updateSeekBarTime = object: Runnable {
@@ -136,11 +123,15 @@ class PlayerFragment : Fragment() {
             }
         }
 
+        //set normal onPrepared
+        mediaPlayer.setOnPreparedListener{onPrepared()}
+        //set next song mechanism
+        mediaPlayer.setOnCompletionListener{next()}
+
         durationHandler = Handler()
         durationHandler.postDelayed(updateSeekBarTime, 100)
 
-        binding.playBtn.setOnClickListener{play()}
-        binding.playBtn.isEnabled = true
+        enableBtns(true)
     }
 
     private fun onPrepared (){
@@ -149,24 +140,56 @@ class PlayerFragment : Fragment() {
     }
 
     private fun play() {
-        if (!isPlaying) {
-            Timber.d("Start")
-            //mediaPlayer.seekTo(songProgress)
-            mediaPlayer.start()
-            isPlaying = true
-            binding.playBtn.setImageResource(R.drawable.ic_pause)
-        } else {
-            Timber.d("Pause")
-            mediaPlayer.pause()
-            isPlaying = false
-            binding.playBtn.setImageResource(R.drawable.ic_play)
+        if (!isPlaying) start()
+        else pause()
+    }
+
+    private fun start(){
+        Timber.d("Start")
+        //mediaPlayer.seekTo(songProgress)
+        mediaPlayer.start()
+        isPlaying = true
+        binding.playBtn.setImageResource(R.drawable.ic_pause)
+    }
+
+    private fun pause(){
+        Timber.d("Pause")
+        mediaPlayer.pause()
+        isPlaying = false
+        binding.playBtn.setImageResource(R.drawable.ic_play)
+    }
+
+    private fun next(){
+        currentSong = (activity as MainActivity).getNextSong()
+        pause()
+        if (currentSong.isNullOrEmpty()){
+            Timber.d("Last song")
+            //TODO stop media player
+        }
+        else {
+            mediaPlayer.stop()
+            mediaPlayer.reset()
+            load()
         }
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        outState.putBoolean(KEY_IS_PLAYING, mediaPlayer.isPlaying())
-        outState.putString(KEY_CURRENT_SONG, currentSong)
+    private fun prev(){
+        currentSong = (activity as MainActivity).getPrevSong()
+        pause()
+        if (currentSong.isNullOrEmpty()){
+            Timber.d("First song")
+            //TODO stop media player
+        }
+        else {
+            mediaPlayer.stop()
+            mediaPlayer.reset()
+            load()
+        }
+    }
 
-        super.onSaveInstanceState(outState)
+    private fun enableBtns ( enable : Boolean ){
+        binding.playBtn.isEnabled = enable
+        binding.nextBtn.isEnabled = enable
+        binding.prevBtn.isEnabled = enable
     }
 }
