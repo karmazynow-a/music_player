@@ -6,16 +6,17 @@
             app:startDestination="@id/playlistFragment">
 
     <fragment android:id="@+id/playerFragment"
-              android:name="com.example.musicplayer.PlayerFragment"
+              android:name="com.example.musicplayer.player.PlayerFragment"
               android:label="PlayerFragment">
         <action android:id="@+id/action_playerFragment_to_playlistFragment" app:destination="@id/playlistFragment"/>
         <argument android:name="songPath" app:argType="string"/>
+        <argument android:name="playlist" app:argType="string"/>
     </fragment>
     <fragment android:id="@+id/themeFragment" android:name="com.example.musicplayer.ThemeFragment"
               android:label="fragment_theme" tools:layout="@layout/fragment_theme">
         <action android:id="@+id/action_themeFragment_to_playerFragment" app:destination="@+id/playlistFragment"/>
     </fragment>
-    <fragment android:id="@+id/playlistFragment" android:name="com.example.musicplayer.PlaylistFragment"
+    <fragment android:id="@+id/playlistFragment" android:name="com.example.musicplayer.playlist.PlaylistFragment"
               android:label="PlaylistFragment">
         <action android:id="@+id/action_playlistFragment_to_playerFragment" app:destination="@id/playerFragment"/>
     </fragment>

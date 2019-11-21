@@ -1,6 +1,7 @@
 package com.example.musicplayer
 
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Environment
@@ -13,6 +14,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.findNavController
 import androidx.navigation.ui.NavigationUI
 import com.example.musicplayer.databinding.ActivityMainBinding
+import com.example.musicplayer.player.PlayerService
 import com.google.android.material.navigation.NavigationView
 import java.io.File
 import java.io.FilenameFilter
@@ -25,10 +27,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var drawerLayout: DrawerLayout
     private var currentPlaylist : String = "Wszystkie utwory"
     var currentSongIndex : Int = 0
-    var currentSongs : MutableSet<String> = mutableSetOf()
+    var currentSongs : MutableList<String> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
         super.onCreate(savedInstanceState)
 
         val sharedPref : SharedPreferences = getPreferences( Context.MODE_PRIVATE)
@@ -63,6 +64,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         //ask for data storage permission
         val permissions = arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE)
         ActivityCompat.requestPermissions(this, permissions,0)
+
+        //start player service
+        startService( Intent(this, PlayerService::class.java))
         }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -100,7 +104,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         return playlist
     }
 
-    fun getList(playlist : String) : MutableSet<String>{
+    fun getList(playlist : String) : MutableList<String>{
         var playlistNames = getPlaylistNames()
 
         if (playlist != "Wszystkie utwory"){
@@ -108,35 +112,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             currentPlaylist = playlistNames[index]
 
             //TODO get playlist from JSON to currentSongs
-            return mutableSetOf()
+            return mutableListOf()
         }
         else {
             currentPlaylist = playlistNames[1]
             return this.currentSongs
-        }
-    }
-
-    fun getNextSong() : String {
-        if (currentSongIndex + 1 == currentSongs.size ){
-            Timber.d ("No more currentSongs!")
-            return ""
-        }
-        else {
-            currentSongIndex += 1
-            Timber.d("Currently playing " + currentSongs.elementAt(currentSongIndex) + " with index " + currentSongIndex)
-            return currentSongs.elementAt(currentSongIndex)
-        }
-    }
-
-    fun getPrevSong() : String {
-        if (currentSongIndex == 0 ){
-            Timber.d ("This is first song!")
-            return ""
-        }
-        else {
-            currentSongIndex -= 1
-            Timber.d("Currently playing " + currentSongs.elementAt(currentSongIndex) + " with index " + currentSongIndex )
-            return currentSongs.elementAt(currentSongIndex)
         }
     }
 }

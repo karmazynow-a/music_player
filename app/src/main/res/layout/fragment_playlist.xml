@@ -9,7 +9,7 @@
              android:layout_height="match_parent"
              android:orientation="vertical"
              android:background="@drawable/background_gradient"
-             tools:context=".PlaylistFragment"
+             tools:context=".playlist.PlaylistFragment"
              tools:layout="@layout/fragment_playlist"
              android:paddingTop="50dp">
 

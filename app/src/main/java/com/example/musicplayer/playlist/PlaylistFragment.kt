@@ -1,4 +1,4 @@
-package com.example.musicplayer
+package com.example.musicplayer.playlist
 
 import android.media.MediaMetadataRetriever
 import android.os.Bundle
@@ -11,7 +11,10 @@ import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.findNavController
+import com.example.musicplayer.MainActivity
+import com.example.musicplayer.R
 import com.example.musicplayer.databinding.FragmentPlaylistBinding
+import com.example.musicplayer.getNameFromPath
 import timber.log.Timber
 
 
@@ -72,7 +75,7 @@ class PlaylistFragment : Fragment() {
         binding.songsList.setOnItemClickListener { _, view, position, _ ->
             view.findNavController().navigate(
                 PlaylistFragmentDirections.actionPlaylistFragmentToPlayerFragment(
-                    currentSongs.elementAt(position)
+                    currentSongs.elementAt(position), playlist
                 )
             )
             (activity as MainActivity).currentSongIndex = position
