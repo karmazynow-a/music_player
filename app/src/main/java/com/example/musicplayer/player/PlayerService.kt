@@ -15,13 +15,24 @@ import java.io.File
 
 class PlayerService :  Service () {
 
-    private var mediaPlayer : MediaPlayer = MediaPlayer()
-    private var currentPlaylist : MutableList<String> = mutableListOf()
-    private var currentPosition : Int = 0
-    private var isPrepared : Boolean = false
-    private val binder : IBinder = PlayerBinder()
-    private var durationHandler : Handler = Handler()
+    private var mediaPlayer : MediaPlayer
+    private var currentPlaylist : MutableList<String>
+    private var currentPosition : Int
+    private var isPrepared : Boolean
+    private var isShuffle : Boolean
+    private val binder : IBinder
+    private var durationHandler : Handler
     private lateinit var notificationManager : NotificationManager
+
+    init {
+        isPrepared = false
+        isShuffle = false
+        currentPosition = 0
+        currentPlaylist = mutableListOf()
+        mediaPlayer = MediaPlayer()
+        binder = PlayerBinder()
+        durationHandler = Handler()
+    }
 
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -61,6 +72,9 @@ class PlayerService :  Service () {
             val finalTime = mediaPlayer.getDuration()
             i.putExtra("progress", songProgress * 100 / finalTime)
         }
+        else if (what.equals(SHUFFLE_CHANGED)) {
+            i.putExtra("isShuffle", isShuffle)
+        }
 
         //sendStickyBroadcast(i)
         sendBroadcast(i)
@@ -82,8 +96,8 @@ class PlayerService :  Service () {
         if (songFile.exists()) {
             val uri = Uri.fromFile(songFile)
 
-            if (mediaPlayer.isPlaying){
-                Timber.d("Player is stopper - called for new song")
+            if (mediaPlayer.isPlaying){ //TODO OR IS STOPPED
+                Timber.d("Player is stopped - called for new song")
                 mediaPlayer.stop()
                 mediaPlayer.reset()
             }
@@ -156,6 +170,19 @@ class PlayerService :  Service () {
         }
     }
 
+    fun shuffle(){
+        if (isShuffle) {
+            Timber.d("Playlist is sorted")
+            currentPlaylist.sort()
+            isShuffle = false
+        } else {
+            Timber.d("Playlist is shuffled")
+            currentPlaylist.shuffle()
+            isShuffle = true
+        }
+        notifyChange(SHUFFLE_CHANGED)
+    }
+
     private fun onPrepared() {
         Timber.d("Player is prepared")
 
@@ -188,6 +215,7 @@ class PlayerService :  Service () {
         const val TRACK_CHANGED = "com.example.musicplayer.trackchanged"
         const val PREPARED_CHANGED = "com.example.musicplayer.preparedchanged"
         const val PLAYING_CHANGED = "com.example.musicplayer.playingchanged"
+        const val SHUFFLE_CHANGED = "com.example.musicplayer.shufflechanged"
     }
 }
 

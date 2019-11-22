@@ -90,6 +90,11 @@
         <item name="android:layout_width">70dp</item>
     </style>
 
+    <style name="miniBtnPlayerStyle">
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:padding">@dimen/miniBtnPadding</item>
+    </style>
+
     <style name="playerText">
     <item name="android:layout_width">match_parent</item>
     <item name="android:layout_height">wrap_content</item>

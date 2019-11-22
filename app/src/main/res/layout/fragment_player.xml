@@ -52,8 +52,14 @@
 
             <ImageButton
                     android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" app:srcCompat="@drawable/ic_shuffle"
+                    android:id="@+id/shuffleBtn" android:layout_weight="1" style="@style/btnPlayerStyle"/>
+
+            <ImageButton
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content" app:srcCompat="@drawable/ic_previous"
                     android:id="@+id/prevBtn" android:layout_weight="1" style="@style/btnPlayerStyle"/>
+
             <ImageButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" app:srcCompat="@drawable/ic_play"
@@ -62,6 +68,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" app:srcCompat="@drawable/ic_next"
                     android:id="@+id/nextBtn" android:layout_weight="1" style="@style/btnPlayerStyle"/>
+
+            <ImageButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" app:srcCompat="@drawable/ic_add"
+                    android:id="@+id/addBtn" android:layout_weight="1" style="@style/btnPlayerStyle"/>
         </TableRow>
 
     </LinearLayout>

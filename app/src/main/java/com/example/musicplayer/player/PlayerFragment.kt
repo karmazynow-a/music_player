@@ -37,6 +37,8 @@ class PlayerFragment : Fragment() {
         binding.playBtn.setOnClickListener { play() }
         binding.nextBtn.setOnClickListener { next() }
         binding.prevBtn.setOnClickListener { prev() }
+        binding.shuffleBtn.setOnClickListener { shuffle() }
+        binding.addBtn.setOnClickListener { add() }
 
         //navbar styling
         (activity as AppCompatActivity).supportActionBar?.title = ""
@@ -56,6 +58,7 @@ class PlayerFragment : Fragment() {
         filter.addAction(PlayerService.PREPARED_CHANGED)
         filter.addAction(PlayerService.TRACK_CHANGED)
         filter.addAction(PlayerService.PLAYING_CHANGED)
+        filter.addAction(PlayerService.SHUFFLE_CHANGED)
         (activity as MainActivity).registerReceiver(statusChange, filter)
     }
 
@@ -75,7 +78,7 @@ class PlayerFragment : Fragment() {
     private var statusChange = object : BroadcastReceiver(){
         override fun onReceive(contxt: Context?, intent: Intent?) {
             val action = intent?.action
-            Timber.d ("Notification received: " + action)
+            //Timber.d ("Notification received: " + action)
             when (action) {
                 PlayerService.PROGRESS_CHANGED -> {
                     binding.progressBar.progress = intent.getIntExtra("progress", 0)
@@ -87,6 +90,15 @@ class PlayerFragment : Fragment() {
 
                 PlayerService.TRACK_CHANGED -> {
                     setSongInfo(intent.getStringExtra("path"))
+                }
+
+                PlayerService.SHUFFLE_CHANGED -> {
+                    if (intent.getBooleanExtra("isShuffle", false)){
+                        binding.shuffleBtn.setColorFilter(R.color.colorAccent)
+                    }
+                    else {
+                        binding.shuffleBtn.setColorFilter(R.color.transparent)
+                    }
                 }
 
                 PlayerService.PLAYING_CHANGED -> {
@@ -145,6 +157,14 @@ class PlayerFragment : Fragment() {
 
     private fun prev(){
         service.prev()
+    }
+
+    private fun shuffle(){
+        service.shuffle()
+    }
+
+    private fun add(){
+        //TODO add to selected playlist
     }
 
     private fun setSongInfo( path : String ) {
