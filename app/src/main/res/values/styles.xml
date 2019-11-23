@@ -10,25 +10,25 @@
     <style name="Gradient.Theme.Teal" parent="Base.Theme.App">
         <item name="colorPrimary">@color/teal</item>
         <item name="colorAccent">@color/deep_purple</item>
-        <item name="android:textColor">@android:color/secondary_text_dark</item>
+        <item name="android:textColor">@color/text_dark</item>
     </style>
 
     <style name="Gradient.Theme.Pink" parent="Base.Theme.App">
         <item name="colorPrimary">@color/amber</item>
         <item name="colorAccent">@color/pink</item>
-        <item name="android:textColor">@android:color/secondary_text_light</item>
+        <item name="android:textColor">@color/text_light</item>
     </style>
 
     <style name="Gradient.Theme.Grey" parent="Base.Theme.App">
         <item name="colorPrimary">@color/shades1</item>
         <item name="colorAccent">@color/shades2</item>
-        <item name="android:textColor">@android:color/secondary_text_dark</item>
+        <item name="android:textColor">@color/text_dark</item>
     </style>
 
     <style name="Gradient.Theme.Cosmic" parent="Base.Theme.App">
         <item name="colorPrimary">@color/pink</item>
         <item name="colorAccent">@color/indigo</item>
-        <item name="android:textColor">@color/textLight</item>
+        <item name="android:textColor">@color/text_light</item>
     </style>
 
     <style name="Gradient.Theme.Mild" parent="Base.Theme.App">

@@ -27,7 +27,8 @@
         <TextView
                 android:text="@string/songNameDefault"
                 android:id="@+id/songName"
-                android:textSize="@dimen/songNameSize" style="@style/playerText"/>
+                android:textSize="@dimen/songNameSize" style="@style/playerText"
+                android:maxLength="35"/>
 
         <TextView
                 android:text="@string/authorNameDefault"

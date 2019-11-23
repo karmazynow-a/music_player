@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.example.musicplayer.*
 import com.example.musicplayer.databinding.FragmentPlayerBinding
@@ -20,8 +21,12 @@ class PlayerFragment : Fragment() {
 
     private lateinit var binding : FragmentPlayerBinding
     private lateinit var service: PlayerService
-    private var isBounded : Boolean = false
-    private var isPlaying : Boolean = false
+    private var isBounded : Boolean
+    private lateinit var viewModel : MainViewModel
+
+    init {
+        isBounded = false
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,12 +38,30 @@ class PlayerFragment : Fragment() {
             R.layout.fragment_player, container, false
         )
 
+        viewModel = activity?.run{ ViewModelProviders.of(this).get(MainViewModel::class.java)
+        } ?: throw Exception("Invalid Activity")
+
         enableBtns (false)
         binding.playBtn.setOnClickListener { play() }
         binding.nextBtn.setOnClickListener { next() }
         binding.prevBtn.setOnClickListener { prev() }
         binding.shuffleBtn.setOnClickListener { shuffle() }
         binding.addBtn.setOnClickListener { add() }
+
+        //set proper buttons' states
+        if ( !viewModel.isPlaying.value!! ){
+            Timber.d("btn playin")
+            binding.playBtn.setImageResource(R.drawable.ic_play)
+        } else {
+            binding.playBtn.setImageResource(R.drawable.ic_pause)
+        }
+
+        if ( viewModel.isShuffle.value!! ){
+            binding.shuffleBtn.setColorFilter(R.color.colorAccent)
+        } else {
+            Timber.d("Shuffle is off")
+            binding.shuffleBtn.setColorFilter(R.color.transparent)
+        }
 
         //navbar styling
         (activity as AppCompatActivity).supportActionBar?.title = ""
@@ -67,12 +90,12 @@ class PlayerFragment : Fragment() {
         super.onStop()
     }
 
-    override fun onDestroy() {
+    override fun onDestroyView() {
         if (isBounded) {
             (activity as MainActivity).unbindService(connection)
             isBounded = false
         }
-        super.onDestroy()
+        super.onDestroyView()
     }
 
     private var statusChange = object : BroadcastReceiver(){
@@ -90,13 +113,17 @@ class PlayerFragment : Fragment() {
 
                 PlayerService.TRACK_CHANGED -> {
                     setSongInfo(intent.getStringExtra("path"))
+                    viewModel.setCurrentSongFromPath(intent.getStringExtra("path"))
+                    Timber.d("Current track is " + viewModel.currentSong.value)
                 }
 
                 PlayerService.SHUFFLE_CHANGED -> {
                     if (intent.getBooleanExtra("isShuffle", false)){
+                        viewModel.setIsShuffle(true)
                         binding.shuffleBtn.setColorFilter(R.color.colorAccent)
                     }
                     else {
+                        viewModel.setIsShuffle(false)
                         binding.shuffleBtn.setColorFilter(R.color.transparent)
                     }
                 }
@@ -104,11 +131,11 @@ class PlayerFragment : Fragment() {
                 PlayerService.PLAYING_CHANGED -> {
                     if (intent.getBooleanExtra("isPlaying", false)){
                         Timber.d("Preparing to be paused")
-                        isPlaying = true
+                        viewModel.setIsPlaying(true)
                         binding.playBtn.setImageResource(R.drawable.ic_pause)
                     } else {
                         Timber.d("Preparing to be played")
-                        isPlaying = false
+                        viewModel.setIsPlaying(false)
                         binding.playBtn.setImageResource(R.drawable.ic_play)
                     }
                 }
@@ -121,13 +148,13 @@ class PlayerFragment : Fragment() {
             var binder = (p1 as PlayerService.PlayerBinder)
             service = binder.getService()
             isBounded = true
+            Timber.d("Loading song " + viewModel.currentSong.value)
 
-            //open
-            val args = PlayerFragmentArgs.fromBundle(arguments!!)
-            val playlist = (activity as MainActivity).getList(args.playlist)
+            if ( service.isReady() ) {
+                service.reset()
+            }
 
-            //TODO change argument to index, not song
-            service.open( playlist.indexOf(args.songPath), playlist )
+            service.open( viewModel.currentSong.value!!, viewModel.currentPlaylist.value!! )
         }
 
         override fun onServiceDisconnected(p0: ComponentName?) {
@@ -137,7 +164,7 @@ class PlayerFragment : Fragment() {
 
     //*************************MUSIC PLAYER SECTION
     private fun play() {
-        if (!isPlaying) start()
+        if (!viewModel.isPlaying.value!!) start()
         else pause()
     }
 

@@ -1,7 +1,10 @@
 package com.example.musicplayer.playlist
 
+import android.content.*
 import android.media.MediaMetadataRetriever
+import android.media.MediaPlayer
 import android.os.Bundle
+import android.os.IBinder
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -10,17 +13,27 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.findNavController
 import com.example.musicplayer.MainActivity
+import com.example.musicplayer.MainViewModel
 import com.example.musicplayer.R
 import com.example.musicplayer.databinding.FragmentPlaylistBinding
 import com.example.musicplayer.getNameFromPath
+import com.example.musicplayer.player.PlayerFragmentArgs
+import com.example.musicplayer.player.PlayerService
 import timber.log.Timber
 
 
 class PlaylistFragment : Fragment() {
-
     private lateinit var binding : FragmentPlaylistBinding
+    private lateinit var service: PlayerService
+    private var isBounded : Boolean
+    private lateinit var viewModel : MainViewModel
+
+    init{
+        isBounded = false
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -31,8 +44,11 @@ class PlaylistFragment : Fragment() {
             R.layout.fragment_playlist, container, false
         )
 
+        viewModel = activity?.run{ ViewModelProviders.of(this).get(MainViewModel::class.java)
+            } ?: throw Exception("Invalid Activity")
+
         //TODO load playlist names from json
-        val playlistNames = (activity as MainActivity).getPlaylistNames()
+        val playlistNames = viewModel.getPlaylistNames()
         binding.choosePlaylistSpinner.adapter = ArrayAdapter(context!!, android.R.layout.simple_spinner_item, playlistNames)
 
         binding.choosePlaylistSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
@@ -51,13 +67,123 @@ class PlaylistFragment : Fragment() {
                 }
             }
         }
-        createList("Wszystkie utwory")
+
+        createList(viewModel.currentPlaylistName.value!!)
+
+        binding.miniPlayBtn.setOnClickListener { play() }
+        binding.miniNextBtn.setOnClickListener { next() }
+        binding.miniPrevBtn.setOnClickListener { prev() }
+
+        if ( !viewModel.isPlaying.value!! ){
+            binding.miniPlayBtn.setImageResource(R.drawable.ic_mini_play)
+        } else {
+            binding.miniPlayBtn.setImageResource(R.drawable.ic_mini_pause)
+        }
 
         return binding.root
     }
 
+    //*****************************NOTIFICATION SECTION
+    override fun onStart() {
+        super.onStart()
+
+        var intent = Intent(context, PlayerService::class.java)
+        (activity as MainActivity).bindService(intent, connection, Context.BIND_AUTO_CREATE)
+
+        var filter = IntentFilter()
+        filter.addAction(PlayerService.PREPARED_CHANGED)
+        filter.addAction(PlayerService.TRACK_CHANGED)
+        filter.addAction(PlayerService.PLAYING_CHANGED)
+        (activity as MainActivity).registerReceiver(statusChange, filter)
+    }
+
+    override fun onStop() {
+        (activity as MainActivity).unregisterReceiver(statusChange)
+        super.onStop()
+    }
+
+    override fun onDestroyView() {
+        if (isBounded) {
+            (activity as MainActivity).unbindService(connection)
+            isBounded = false
+        }
+        super.onDestroyView()
+    }
+
+    private var statusChange = object : BroadcastReceiver(){
+        override fun onReceive(contxt: Context?, intent: Intent?) {
+            val action = intent?.action
+            when (action) {
+                PlayerService.PREPARED_CHANGED -> {
+                    enableBtns(intent.getBooleanExtra("isPrepared", false))
+                }
+
+                PlayerService.PLAYING_CHANGED -> {
+                    if (intent.getBooleanExtra("isPlaying", false)){
+                        Timber.d("Preparing to be paused")
+                        viewModel.setIsPlaying(true)
+                        binding.miniPlayBtn.setImageResource(R.drawable.ic_mini_pause)
+                    } else {
+                        Timber.d("Preparing to be played")
+                        viewModel.setIsPlaying(false)
+                        binding.miniPlayBtn.setImageResource(R.drawable.ic_mini_play)
+                    }
+                }
+
+                PlayerService.TRACK_CHANGED -> {
+
+                }
+            }
+        }
+    }
+
+    private var connection = object : ServiceConnection {
+        override fun onServiceConnected(p0: ComponentName?, p1: IBinder?) {
+            var binder = (p1 as PlayerService.PlayerBinder)
+            service = binder.getService()
+            isBounded = true
+        }
+
+        override fun onServiceDisconnected(p0: ComponentName?) {
+            isBounded = false
+        }
+    }
+
+    //*************************MINI MUSIC PLAYER SECTION
+    private fun play() {
+        if (!viewModel.isPlaying.value!!) start()
+        else pause()
+    }
+
+    private fun start(){
+        Timber.d("Start")
+
+        //if it's the first click after opening
+        if ( !service.isReady() ) { //MEDIA_PLAYER_IDLE
+            service.open(viewModel.currentSong.value!!, viewModel.currentPlaylist.value!!)
+        }
+        else {
+            service.start()
+        }
+    }
+
+    private fun pause(){
+        Timber.d("Pause")
+        service.stop()
+    }
+
+    private fun next(){
+        service.next()
+    }
+
+    private fun prev(){
+        service.prev()
+    }
+
+    //*************************PLAYLIST SECTION
     private fun createList (playlist : String) {
-        var currentSongs = (activity as MainActivity).getList(playlist)
+        //var currentSongs = (activity as MainActivity).getList(playlist)
+        var currentSongs = viewModel.currentPlaylist.value!!
         (activity as AppCompatActivity).supportActionBar?.title = playlist
 
         val listItems = arrayOfNulls<String>(currentSongs.size)
@@ -78,7 +204,16 @@ class PlaylistFragment : Fragment() {
                     currentSongs.elementAt(position), playlist
                 )
             )
-            (activity as MainActivity).currentSongIndex = position
+            Timber.d("Setting current track to " + position)
+            viewModel.setCurrentSong (position)
+            Timber.d("Now it is " + viewModel.currentSong.value)
+            viewModel.setCurrentPlaylist(currentSongs)
         }
+    }
+
+    private fun enableBtns ( enable : Boolean ){
+        binding.miniPlayBtn.isEnabled = enable
+        binding.miniNextBtn.isEnabled = enable
+        binding.miniPrevBtn.isEnabled = enable
     }
 }
