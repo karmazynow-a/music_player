@@ -1,10 +1,9 @@
 package com.example.musicplayer.player
 
-import android.app.Notification
+
 import android.app.NotificationManager
 import android.app.Service
 import android.content.Intent
-import android.graphics.drawable.Icon
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Binder
@@ -12,10 +11,9 @@ import android.os.Handler
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import com.example.musicplayer.R
-import com.example.musicplayer.getSongName
+import com.example.musicplayer.SongNameResolver
 import timber.log.Timber
 import java.io.File
-import java.util.*
 
 class PlayerService :  Service () {
 
@@ -139,7 +137,7 @@ class PlayerService :  Service () {
             val notification = NotificationCompat.Builder(this, "" )
                 .setSmallIcon(R.drawable.ic_cd)
                 .setContentTitle(getString(R.string.app_name))
-                .setContentText("Playing " + getSongName(currentPlaylist[currentPosition]))
+                .setContentText("Playing " + SongNameResolver.getSongName(currentPlaylist[currentPosition]))
 
             // NOTIFICATION_IDFOREGROUND_SERVICE is 78945
             notificationManager.notify(78945, notification.build())
@@ -160,6 +158,7 @@ class PlayerService :  Service () {
         if (currentPosition + 1 == currentPlaylist.size){
             Timber.d ("No more songs on playlist!")
             mediaPlayer.pause()
+            notifyChange(PLAYING_CHANGED)
         }
         else {
             currentPosition += 1
@@ -173,6 +172,7 @@ class PlayerService :  Service () {
         if (currentPosition == 0){
             Timber.d ("No more songs on playlist!")
             mediaPlayer.pause()
+            notifyChange(PLAYING_CHANGED)
         }
         else {
             currentPosition -= 1
@@ -186,7 +186,7 @@ class PlayerService :  Service () {
         if (isShuffle) {
             Timber.d("Playlist is sorted")
             //currentPlaylist.sort()
-            currentPlaylist.sortWith(compareBy { getSongName(it) })
+            currentPlaylist.sortWith(compareBy { SongNameResolver.getSongName(it) })
             isShuffle = false
         } else {
             Timber.d("Playlist is shuffled")

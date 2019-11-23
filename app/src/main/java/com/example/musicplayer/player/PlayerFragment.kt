@@ -6,8 +6,10 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.IBinder
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupMenu
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -38,8 +40,7 @@ class PlayerFragment : Fragment() {
             R.layout.fragment_player, container, false
         )
 
-        viewModel = activity?.run{ ViewModelProviders.of(this).get(MainViewModel::class.java)
-        } ?: throw Exception("Invalid Activity")
+        viewModel = ViewModelProviders.of(requireActivity()).get(MainViewModel::class.java)
 
         enableBtns (false)
         binding.playBtn.setOnClickListener { play() }
@@ -192,6 +193,18 @@ class PlayerFragment : Fragment() {
 
     private fun add(){
         //TODO add to selected playlist
+        var popUp = PopupMenu(context, binding.addBtn)
+
+        for ( name in viewModel.getPlaylistNames()){
+            popUp.menu.add(name)
+        }
+
+        popUp.setOnMenuItemClickListener { item: MenuItem? ->
+            viewModel.addSongToPlaylist( item?.title.toString() )
+            true
+        }
+
+        popUp.show()
     }
 
     private fun setSongInfo( path : String ) {
@@ -202,7 +215,7 @@ class PlayerFragment : Fragment() {
         binding.authorName.text = if (author.isNullOrEmpty()) "Nieznany" else author
 
         val name = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE)
-        binding.songName.text = if (name.isNullOrEmpty()) getNameFromPath(path) else name
+        binding.songName.text = if (name.isNullOrEmpty()) SongNameResolver.getNameFromPath(path) else name
     }
 
     private fun enableBtns ( enable : Boolean ){

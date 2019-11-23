@@ -15,11 +15,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.findNavController
-import com.example.musicplayer.MainActivity
-import com.example.musicplayer.MainViewModel
-import com.example.musicplayer.R
+import com.example.musicplayer.*
 import com.example.musicplayer.databinding.FragmentPlaylistBinding
-import com.example.musicplayer.getNameFromPath
 import com.example.musicplayer.player.PlayerFragmentArgs
 import com.example.musicplayer.player.PlayerService
 import timber.log.Timber
@@ -44,10 +41,8 @@ class PlaylistFragment : Fragment() {
             R.layout.fragment_playlist, container, false
         )
 
-        viewModel = activity?.run{ ViewModelProviders.of(this).get(MainViewModel::class.java)
-            } ?: throw Exception("Invalid Activity")
+        viewModel = ViewModelProviders.of(requireActivity()).get(MainViewModel::class.java)
 
-        //TODO load playlist names from json
         val playlistNames = viewModel.getPlaylistNames()
         binding.choosePlaylistSpinner.adapter = ArrayAdapter(context!!, android.R.layout.simple_spinner_item, playlistNames)
 
@@ -63,12 +58,13 @@ class PlaylistFragment : Fragment() {
                 else {
                     Timber.d("Selected: " + playlistNames[position])
                     //TODO switch to new playlist
-                    //createList(playlistName)
+                    viewModel.setPlaylist(playlistNames[position])
+                    createList()
                 }
             }
         }
 
-        createList(viewModel.currentPlaylistName.value!!)
+        createList()
 
         binding.miniPlayBtn.setOnClickListener { play() }
         binding.miniNextBtn.setOnClickListener { next() }
@@ -181,19 +177,13 @@ class PlaylistFragment : Fragment() {
     }
 
     //*************************PLAYLIST SECTION
-    private fun createList (playlist : String) {
-        //var currentSongs = (activity as MainActivity).getList(playlist)
+    private fun createList () {
         var currentSongs = viewModel.currentPlaylist.value!!
-        (activity as AppCompatActivity).supportActionBar?.title = playlist
+        (activity as AppCompatActivity).supportActionBar?.title = viewModel.currentPlaylistName.value!!
 
         val listItems = arrayOfNulls<String>(currentSongs.size)
-        val mediaMetadataRetriever = MediaMetadataRetriever()
         for ( i in 0 until currentSongs.size){
-            //get song name
-            mediaMetadataRetriever.setDataSource(currentSongs.elementAt(i))
-
-            val name = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE)
-            listItems[i] = if (name.isNullOrEmpty()) getNameFromPath(currentSongs.elementAt(i)) else name
+            listItems[i] = SongNameResolver.getSongName(currentSongs.elementAt(i))
         }
 
         val adapter = ArrayAdapter(context!!, android.R.layout.simple_list_item_1, listItems)
@@ -201,13 +191,11 @@ class PlaylistFragment : Fragment() {
         binding.songsList.setOnItemClickListener { _, view, position, _ ->
             view.findNavController().navigate(
                 PlaylistFragmentDirections.actionPlaylistFragmentToPlayerFragment(
-                    currentSongs.elementAt(position), playlist
+                    currentSongs.elementAt(position), viewModel.currentPlaylistName.value!!
                 )
             )
             Timber.d("Setting current track to " + position)
             viewModel.setCurrentSong (position)
-            Timber.d("Now it is " + viewModel.currentSong.value)
-            viewModel.setCurrentPlaylist(currentSongs)
         }
     }
 

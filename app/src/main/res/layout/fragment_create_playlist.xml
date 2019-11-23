@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools">
+    <data>
+
+    </data>
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            tools:layout="@layout/fragment_create_playlist"
+            tools:context=".CreatePlaylistFragment"
+            android:background="@drawable/background_gradient"
+            android:paddingTop="50dp" android:gravity="center_horizontal">
+
+        <EditText
+                android:inputType="textPersonName"
+                android:id="@+id/newPlaylistName"
+                android:hint="@string/newPlaylistNameHint"
+                style="@style/createText"/>
+
+        <TextView
+                android:text="@string/chooseSongsHelp"
+                android:layout_below="@+id/newPlaylistName"
+                android:id="@+id/chooseSongsHelp"
+                style="@style/createText"/>
+
+        <ListView android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:layout_below="@id/chooseSongsHelp"
+                  android:layout_above="@id/createPlaylistBtn"
+                  android:id="@+id/chooseSongList"
+                  android:choiceMode="multipleChoice"/>
+
+        <Button
+                android:text="@string/createPlaylistBtnHelp"
+                style="@style/createBtn"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:id="@+id/createPlaylistBtn"/>
+
+
+    </RelativeLayout>
+</layout>
