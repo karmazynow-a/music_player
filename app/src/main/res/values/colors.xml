@@ -6,6 +6,7 @@
 
     <color name="textLight">@android:color/primary_text_dark</color>
     <color name="textDark">@android:color/primary_text_light</color>
+    <color name="btnBlack">#FF000000</color>
 
     <color name="teal">#009688</color>
     <color name="blue">#1a617c</color>

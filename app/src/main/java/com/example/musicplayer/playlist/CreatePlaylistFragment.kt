@@ -1,8 +1,5 @@
-package com.example.musicplayer
+package com.example.musicplayer.playlist
 
-import android.content.Context
-import android.media.MediaMetadataRetriever
-import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -14,9 +11,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.findNavController
+import com.example.musicplayer.MainViewModel
+import com.example.musicplayer.R
+import com.example.musicplayer.SongNameResolver
 import com.example.musicplayer.databinding.FragmentCreatePlaylistBinding
-import com.example.musicplayer.playlist.PlaylistFragmentDirections
-import timber.log.Timber
 
 
 class CreatePlaylistFragment : Fragment() {

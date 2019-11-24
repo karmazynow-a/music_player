@@ -31,18 +31,15 @@
                   android:background="@drawable/mini_player_background">
 
         <ImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" app:srcCompat="@drawable/ic_mini_previous"
-                android:id="@+id/miniPrevBtn" android:layout_weight="1" style="@style/miniBtnPlayerStyle"/>
+                app:srcCompat="@drawable/ic_mini_previous"
+                android:id="@+id/miniPrevBtn" style="@style/miniBtnPlayerStyle"/>
 
         <ImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" app:srcCompat="@drawable/ic_mini_play"
-                android:id="@+id/miniPlayBtn" android:layout_weight="1" style="@style/miniBtnPlayerStyle"/>
+                app:srcCompat="@drawable/ic_mini_play"
+                android:id="@+id/miniPlayBtn"  style="@style/miniBtnPlayerStyle"/>
         <ImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" app:srcCompat="@drawable/ic_mini_next"
-                android:id="@+id/miniNextBtn" android:layout_weight="1" style="@style/miniBtnPlayerStyle"/>
+                app:srcCompat="@drawable/ic_mini_next"
+                android:id="@+id/miniNextBtn"  style="@style/miniBtnPlayerStyle"/>
     </LinearLayout>
 
 </RelativeLayout>

@@ -17,7 +17,6 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.findNavController
 import com.example.musicplayer.*
 import com.example.musicplayer.databinding.FragmentPlaylistBinding
-import com.example.musicplayer.player.PlayerFragmentArgs
 import com.example.musicplayer.player.PlayerService
 import timber.log.Timber
 
@@ -52,12 +51,9 @@ class PlaylistFragment : Fragment() {
             }
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                if (position == 0){
-                    Timber.d("Selected helper text")
-                }
+                if (position == 0){}
                 else {
                     Timber.d("Selected: " + playlistNames[position])
-                    //TODO switch to new playlist
                     viewModel.setPlaylist(playlistNames[position])
                     createList()
                 }
@@ -69,6 +65,10 @@ class PlaylistFragment : Fragment() {
         binding.miniPlayBtn.setOnClickListener { play() }
         binding.miniNextBtn.setOnClickListener { next() }
         binding.miniPrevBtn.setOnClickListener { prev() }
+        binding.miniPlayer.setOnClickListener{
+            Timber.d("Going to player view")
+            view!!.findNavController().navigate(R.id.action_playlistFragment_to_playerFragment)
+        }
 
         if ( !viewModel.isPlaying.value!! ){
             binding.miniPlayBtn.setImageResource(R.drawable.ic_mini_play)
@@ -126,9 +126,7 @@ class PlaylistFragment : Fragment() {
                     }
                 }
 
-                PlayerService.TRACK_CHANGED -> {
-
-                }
+                PlayerService.TRACK_CHANGED -> {}
             }
         }
     }
@@ -189,11 +187,7 @@ class PlaylistFragment : Fragment() {
         val adapter = ArrayAdapter(context!!, android.R.layout.simple_list_item_1, listItems)
         binding.songsList.adapter = adapter
         binding.songsList.setOnItemClickListener { _, view, position, _ ->
-            view.findNavController().navigate(
-                PlaylistFragmentDirections.actionPlaylistFragmentToPlayerFragment(
-                    currentSongs.elementAt(position), viewModel.currentPlaylistName.value!!
-                )
-            )
+            view!!.findNavController().navigate(R.id.action_playlistFragment_to_playerFragment)
             Timber.d("Setting current track to " + position)
             viewModel.setCurrentSong (position)
         }

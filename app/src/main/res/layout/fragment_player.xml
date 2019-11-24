@@ -37,7 +37,7 @@
                 android:id="@+id/authorName" style="@style/playerText"
                 android:textSize="@dimen/authorTextSize"/>
 
-        <ProgressBar
+        <SeekBar
                 style="?android:attr/progressBarStyleHorizontal"
                 android:layout_height="wrap_content"
                 android:layout_width="match_parent"

@@ -1,15 +1,18 @@
 package com.example.musicplayer.player
 
 import android.content.*
+import android.graphics.Color
 import android.media.MediaMetadataRetriever
 import android.os.Bundle
 import android.os.Handler
 import android.os.IBinder
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
+import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -48,20 +51,27 @@ class PlayerFragment : Fragment() {
         binding.prevBtn.setOnClickListener { prev() }
         binding.shuffleBtn.setOnClickListener { shuffle() }
         binding.addBtn.setOnClickListener { add() }
+        binding.progressBar.setOnSeekBarChangeListener (object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {}
+            override fun onStartTrackingTouch(p0: SeekBar?) {}
+            override fun onStopTrackingTouch(p0: SeekBar?) {
+                service.setProgress(p0!!.progress)
+            }
+        })
 
         //set proper buttons' states
         if ( !viewModel.isPlaying.value!! ){
-            Timber.d("btn playin")
             binding.playBtn.setImageResource(R.drawable.ic_play)
         } else {
             binding.playBtn.setImageResource(R.drawable.ic_pause)
         }
 
         if ( viewModel.isShuffle.value!! ){
-            binding.shuffleBtn.setColorFilter(R.color.colorAccent)
+            var value = TypedValue()
+           context!!.theme.resolveAttribute (R.attr.colorAccent, value, true)
+            binding.shuffleBtn.setColorFilter(value.data)
         } else {
-            Timber.d("Shuffle is off")
-            binding.shuffleBtn.setColorFilter(R.color.transparent)
+            binding.shuffleBtn.setColorFilter(R.color.btnBlack)
         }
 
         //navbar styling
@@ -83,6 +93,7 @@ class PlayerFragment : Fragment() {
         filter.addAction(PlayerService.TRACK_CHANGED)
         filter.addAction(PlayerService.PLAYING_CHANGED)
         filter.addAction(PlayerService.SHUFFLE_CHANGED)
+        filter.addAction(PlayerService.ALL)
         (activity as MainActivity).registerReceiver(statusChange, filter)
     }
 
@@ -121,11 +132,13 @@ class PlayerFragment : Fragment() {
                 PlayerService.SHUFFLE_CHANGED -> {
                     if (intent.getBooleanExtra("isShuffle", false)){
                         viewModel.setIsShuffle(true)
-                        binding.shuffleBtn.setColorFilter(R.color.colorAccent)
+                        var value = TypedValue()
+                        context!!.theme.resolveAttribute (R.attr.colorAccent, value, true)
+                        binding.shuffleBtn.setColorFilter(value.data)
                     }
                     else {
                         viewModel.setIsShuffle(false)
-                        binding.shuffleBtn.setColorFilter(R.color.transparent)
+                        binding.shuffleBtn.setColorFilter(R.color.btnBlack)
                     }
                 }
 
@@ -140,6 +153,28 @@ class PlayerFragment : Fragment() {
                         binding.playBtn.setImageResource(R.drawable.ic_play)
                     }
                 }
+
+                PlayerService.ALL -> {
+                    Timber.d("inPlaying: " + intent.getBooleanExtra("isPlaying", false)
+                            + "songPath" + setSongInfo(intent.getStringExtra("path")))
+                    //change playing btn
+                    if (intent.getBooleanExtra("isPlaying", false)){
+                        viewModel.setIsPlaying(true)
+                        binding.playBtn.setImageResource(R.drawable.ic_pause)
+                    } else {
+                        viewModel.setIsPlaying(false)
+                        binding.playBtn.setImageResource(R.drawable.ic_play)
+                    }
+
+                    //set current track
+                    setSongInfo(intent.getStringExtra("path"))
+                    viewModel.setCurrentSongFromPath(intent.getStringExtra("path"))
+
+                    //set progress
+                    binding.progressBar.progress = intent.getIntExtra("progress", 0)
+
+                    enableBtns(intent.getBooleanExtra("isPrepared", false))
+                }
             }
         }
     }
@@ -151,11 +186,8 @@ class PlayerFragment : Fragment() {
             isBounded = true
             Timber.d("Loading song " + viewModel.currentSong.value)
 
-            if ( service.isReady() ) {
-                service.reset()
-            }
+            service.open(viewModel.currentSong.value!!, viewModel.currentPlaylist.value!!)
 
-            service.open( viewModel.currentSong.value!!, viewModel.currentPlaylist.value!! )
         }
 
         override fun onServiceDisconnected(p0: ComponentName?) {
@@ -192,7 +224,6 @@ class PlayerFragment : Fragment() {
     }
 
     private fun add(){
-        //TODO add to selected playlist
         var popUp = PopupMenu(context, binding.addBtn)
 
         for ( name in viewModel.getPlaylistNames()){

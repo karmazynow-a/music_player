@@ -75,7 +75,7 @@ class PlayerService :  Service () {
         i.putExtra("isPrepared", isPrepared)
         i.putExtra("isPlaying", mediaPlayer.isPlaying)
 
-        if (what.equals(PROGRESS_CHANGED)){
+        if (what.equals(PROGRESS_CHANGED) || what.equals(ALL)){
             val songProgress = mediaPlayer.getCurrentPosition()
             val finalTime = mediaPlayer.getDuration()
             i.putExtra("progress", songProgress * 100 / finalTime)
@@ -91,11 +91,20 @@ class PlayerService :  Service () {
     //*******************MUSIC PLAYER SECTION
     //set playlist info and currentPos
     fun open (pos : Int, playlist : MutableList<String>){
-        currentPlaylist = playlist
-        currentPosition = pos
+        //we don't need to reopen song
+        if(currentPosition == pos && currentPlaylist == playlist){
+            notifyChange(ALL)
+        }
+        else {
+            if (isReady) reset()
 
-        //load current song
-        load()
+            currentPlaylist = playlist
+            currentPosition = pos
+
+            //load current song
+            load()
+        }
+
     }
 
     private fun load() {
@@ -196,6 +205,17 @@ class PlayerService :  Service () {
         notifyChange(SHUFFLE_CHANGED)
     }
 
+    fun setProgress(progress : Int){
+        val finalTime = mediaPlayer.getDuration()
+        val value = progress * finalTime / 100
+
+        val wasPlaying = mediaPlayer.isPlaying
+        if (wasPlaying) mediaPlayer.pause()
+        mediaPlayer.seekTo(value)
+        if (wasPlaying) mediaPlayer.start()
+        notifyChange(PROGRESS_CHANGED)
+    }
+
     private fun onPrepared() {
         Timber.d("Player is prepared")
 
@@ -230,6 +250,7 @@ class PlayerService :  Service () {
         const val PREPARED_CHANGED = "com.example.musicplayer.preparedchanged"
         const val PLAYING_CHANGED = "com.example.musicplayer.playingchanged"
         const val SHUFFLE_CHANGED = "com.example.musicplayer.shufflechanged"
+        const val ALL = "com.example.musicplayer.all"
     }
 }
 

@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:title="@string/chooseSourceBtnDescp" android:id="@+id/chooseSourceBtn"/>
     <item android:title="@string/playlistBtnDescp"
           android:id="@+id/createPlaylistFragment"/>
+    <item android:title="@string/deletePlaylistBtnDescp"
+          android:id="@+id/deletePlaylistFragment"/>
     <item android:title="@string/themeBtnDescp"
           android:id="@+id/themeFragment"/>
+    <item android:title="@string/chooseSourceBtnDescp"
+          android:id="@+id/selectPathFragment"/>
 
 </menu>

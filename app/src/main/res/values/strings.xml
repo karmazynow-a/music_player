@@ -13,4 +13,6 @@
     <string name="chooseSongsHelp">Wybierz utwory:</string>
     <string name="createPlaylistBtnHelp">Stwórz Playlistę</string>
     <string name="newPlaylistNameHint">Podaj nazwę playlisty</string>
+    <string name="deletePlaylistHelp">Wybierz playlistę do usunięcia:</string>
+    <string name="deletePlaylistBtnDescp">Usuń playlistę</string>
 </resources>
