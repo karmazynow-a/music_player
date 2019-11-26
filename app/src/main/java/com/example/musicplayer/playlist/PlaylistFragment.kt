@@ -1,8 +1,6 @@
 package com.example.musicplayer.playlist
 
 import android.content.*
-import android.media.MediaMetadataRetriever
-import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.IBinder
 import androidx.fragment.app.Fragment
@@ -53,7 +51,7 @@ class PlaylistFragment : Fragment() {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 if (position == 0){}
                 else {
-                    Timber.d("Selected: " + playlistNames[position])
+                    Timber.d("Selected playlist: %s", playlistNames[position])
                     viewModel.setPlaylist(playlistNames[position])
                     createList()
                 }
@@ -66,7 +64,7 @@ class PlaylistFragment : Fragment() {
         binding.miniNextBtn.setOnClickListener { next() }
         binding.miniPrevBtn.setOnClickListener { prev() }
         binding.miniPlayer.setOnClickListener{
-            Timber.d("Going to player view")
+            Timber.d("Switching to player view")
             view!!.findNavController().navigate(R.id.action_playlistFragment_to_playerFragment)
         }
 
@@ -83,10 +81,10 @@ class PlaylistFragment : Fragment() {
     override fun onStart() {
         super.onStart()
 
-        var intent = Intent(context, PlayerService::class.java)
+        val intent = Intent(context, PlayerService::class.java)
         (activity as MainActivity).bindService(intent, connection, Context.BIND_AUTO_CREATE)
 
-        var filter = IntentFilter()
+        val filter = IntentFilter()
         filter.addAction(PlayerService.PREPARED_CHANGED)
         filter.addAction(PlayerService.TRACK_CHANGED)
         filter.addAction(PlayerService.PLAYING_CHANGED)
@@ -133,7 +131,7 @@ class PlaylistFragment : Fragment() {
 
     private var connection = object : ServiceConnection {
         override fun onServiceConnected(p0: ComponentName?, p1: IBinder?) {
-            var binder = (p1 as PlayerService.PlayerBinder)
+            val binder = (p1 as PlayerService.PlayerBinder)
             service = binder.getService()
             isBounded = true
         }
@@ -176,7 +174,7 @@ class PlaylistFragment : Fragment() {
 
     //*************************PLAYLIST SECTION
     private fun createList () {
-        var currentSongs = viewModel.currentPlaylist.value!!
+        val currentSongs = viewModel.currentPlaylist.value!!
         (activity as AppCompatActivity).supportActionBar?.title = viewModel.currentPlaylistName.value!!
 
         val listItems = arrayOfNulls<String>(currentSongs.size)
@@ -188,7 +186,7 @@ class PlaylistFragment : Fragment() {
         binding.songsList.adapter = adapter
         binding.songsList.setOnItemClickListener { _, view, position, _ ->
             view!!.findNavController().navigate(R.id.action_playlistFragment_to_playerFragment)
-            Timber.d("Setting current track to " + position)
+            Timber.d("Setting current track to %s", currentSongs[position])
             viewModel.setCurrentSong (position)
         }
     }

@@ -1,6 +1,5 @@
 package com.example.musicplayer.player
 
-
 import android.app.NotificationManager
 import android.app.Service
 import android.content.Intent
@@ -76,8 +75,8 @@ class PlayerService :  Service () {
         i.putExtra("isPlaying", mediaPlayer.isPlaying)
 
         if (what.equals(PROGRESS_CHANGED) || what.equals(ALL)){
-            val songProgress = mediaPlayer.getCurrentPosition()
-            val finalTime = mediaPlayer.getDuration()
+            val songProgress = mediaPlayer.currentPosition
+            val finalTime = mediaPlayer.duration
             i.putExtra("progress", songProgress * 100 / finalTime)
         }
         else if (what.equals(SHUFFLE_CHANGED)) {
@@ -131,7 +130,7 @@ class PlayerService :  Service () {
 
 
         } else {
-            Timber.d("File not found: 0 " + songPath)
+            Timber.d("File %s not found ", songPath)
         }
 
     }
@@ -141,7 +140,6 @@ class PlayerService :  Service () {
             Timber.d("Player start")
             mediaPlayer.start()
             notifyChange(PLAYING_CHANGED)
-            Timber.d("is Playing: " + mediaPlayer.isPlaying)
 
             val notification = NotificationCompat.Builder(this, "" )
                 .setSmallIcon(R.drawable.ic_cd)
@@ -194,7 +192,6 @@ class PlayerService :  Service () {
     fun shuffle(){
         if (isShuffle) {
             Timber.d("Playlist is sorted")
-            //currentPlaylist.sort()
             currentPlaylist.sortWith(compareBy { SongNameResolver.getSongName(it) })
             isShuffle = false
         } else {
@@ -206,7 +203,7 @@ class PlayerService :  Service () {
     }
 
     fun setProgress(progress : Int){
-        val finalTime = mediaPlayer.getDuration()
+        val finalTime = mediaPlayer.duration
         val value = progress * finalTime / 100
 
         val wasPlaying = mediaPlayer.isPlaying

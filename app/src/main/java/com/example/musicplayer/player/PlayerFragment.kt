@@ -1,10 +1,8 @@
 package com.example.musicplayer.player
 
 import android.content.*
-import android.graphics.Color
 import android.media.MediaMetadataRetriever
 import android.os.Bundle
-import android.os.Handler
 import android.os.IBinder
 import android.util.TypedValue
 import android.view.LayoutInflater
@@ -16,7 +14,6 @@ import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.example.musicplayer.*
 import com.example.musicplayer.databinding.FragmentPlayerBinding
@@ -67,8 +64,8 @@ class PlayerFragment : Fragment() {
         }
 
         if ( viewModel.isShuffle.value!! ){
-            var value = TypedValue()
-           context!!.theme.resolveAttribute (R.attr.colorAccent, value, true)
+            val value = TypedValue()
+            context!!.theme.resolveAttribute (R.attr.colorAccent, value, true)
             binding.shuffleBtn.setColorFilter(value.data)
         } else {
             binding.shuffleBtn.setColorFilter(R.color.btnBlack)
@@ -84,10 +81,10 @@ class PlayerFragment : Fragment() {
     override fun onStart() {
         super.onStart()
 
-        var intent = Intent(context, PlayerService::class.java)
+        val intent = Intent(context, PlayerService::class.java)
         (activity as MainActivity).bindService(intent, connection, Context.BIND_AUTO_CREATE)
 
-        var filter = IntentFilter()
+        val filter = IntentFilter()
         filter.addAction(PlayerService.PROGRESS_CHANGED)
         filter.addAction(PlayerService.PREPARED_CHANGED)
         filter.addAction(PlayerService.TRACK_CHANGED)
@@ -126,13 +123,13 @@ class PlayerFragment : Fragment() {
                 PlayerService.TRACK_CHANGED -> {
                     setSongInfo(intent.getStringExtra("path"))
                     viewModel.setCurrentSongFromPath(intent.getStringExtra("path"))
-                    Timber.d("Current track is " + viewModel.currentSong.value)
+                    Timber.d("Current track is %s", viewModel.currentSong.value)
                 }
 
                 PlayerService.SHUFFLE_CHANGED -> {
                     if (intent.getBooleanExtra("isShuffle", false)){
                         viewModel.setIsShuffle(true)
-                        var value = TypedValue()
+                        val value = TypedValue()
                         context!!.theme.resolveAttribute (R.attr.colorAccent, value, true)
                         binding.shuffleBtn.setColorFilter(value.data)
                     }
@@ -155,9 +152,6 @@ class PlayerFragment : Fragment() {
                 }
 
                 PlayerService.ALL -> {
-                    Timber.d("inPlaying: " + intent.getBooleanExtra("isPlaying", false)
-                            + "songPath" + setSongInfo(intent.getStringExtra("path")))
-                    //change playing btn
                     if (intent.getBooleanExtra("isPlaying", false)){
                         viewModel.setIsPlaying(true)
                         binding.playBtn.setImageResource(R.drawable.ic_pause)
@@ -166,11 +160,9 @@ class PlayerFragment : Fragment() {
                         binding.playBtn.setImageResource(R.drawable.ic_play)
                     }
 
-                    //set current track
                     setSongInfo(intent.getStringExtra("path"))
                     viewModel.setCurrentSongFromPath(intent.getStringExtra("path"))
 
-                    //set progress
                     binding.progressBar.progress = intent.getIntExtra("progress", 0)
 
                     enableBtns(intent.getBooleanExtra("isPrepared", false))
@@ -181,13 +173,12 @@ class PlayerFragment : Fragment() {
 
     private var connection = object : ServiceConnection {
         override fun onServiceConnected(p0: ComponentName?, p1: IBinder?) {
-            var binder = (p1 as PlayerService.PlayerBinder)
+            val binder = (p1 as PlayerService.PlayerBinder)
             service = binder.getService()
             isBounded = true
-            Timber.d("Loading song " + viewModel.currentSong.value)
+            Timber.d("Loading song %s", viewModel.currentSong.value)
 
             service.open(viewModel.currentSong.value!!, viewModel.currentPlaylist.value!!)
-
         }
 
         override fun onServiceDisconnected(p0: ComponentName?) {
@@ -224,7 +215,7 @@ class PlayerFragment : Fragment() {
     }
 
     private fun add(){
-        var popUp = PopupMenu(context, binding.addBtn)
+        val popUp = PopupMenu(context, binding.addBtn)
 
         for ( name in viewModel.getPlaylistNames()){
             popUp.menu.add(name)
@@ -239,7 +230,7 @@ class PlayerFragment : Fragment() {
     }
 
     private fun setSongInfo( path : String ) {
-        var mediaMetadataRetriever = MediaMetadataRetriever()
+        val mediaMetadataRetriever = MediaMetadataRetriever()
         mediaMetadataRetriever.setDataSource( path )
         var author = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST)
         if (author.isNullOrEmpty()) author = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUMARTIST)

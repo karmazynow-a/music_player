@@ -4,7 +4,6 @@ import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
 import android.media.MediaMetadataRetriever
-import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -14,8 +13,6 @@ import timber.log.Timber
 import java.io.File
 import java.io.FilenameFilter
 import java.lang.Exception
-import java.text.FieldPosition
-import kotlin.contracts.contract
 
 
 //viewModel shared between Playlist and Player
@@ -48,8 +45,6 @@ class MainViewModel( application: Application) : AndroidViewModel(application){
         get() = _isShuffle
 
     init {
-        Timber.d("Create ViewModel")
-
         //get path from shared preferences
         sharedPref = application.getSharedPreferences(application.packageName, Context.MODE_PRIVATE)
         path = sharedPref.getString("path", "/sdcard/")!!
@@ -66,7 +61,7 @@ class MainViewModel( application: Application) : AndroidViewModel(application){
         _currentSong.value = sharedPref.getInt("songIndex", 0)
         _currentPlaylistName.value = sharedPref.getString("playlist", "Wszystkie utwory")!!
 
-        Timber.d("Song index is " + _currentSong.value + " playlist is " + _currentPlaylistName.value)
+        Timber.d("Current song index is %s and current playlist is %s",_currentSong.value , _currentPlaylistName.value)
 
         _currentPlaylist.value = getAllSongs(path)
         _isPlaying.value = false
@@ -78,7 +73,7 @@ class MainViewModel( application: Application) : AndroidViewModel(application){
         super.onCleared()
         val editor: SharedPreferences.Editor = sharedPref.edit()
 
-        Timber.d("SAVING Song index is " + _currentSong.value + " playlist is " + _currentPlaylistName.value)
+        Timber.d("SAVING Song index is %s playlist is %s" ,_currentSong.value, _currentPlaylistName.value)
         editor.putString("path", path)
         editor.putString("playlist", _currentPlaylistName.value)
         editor.putInt("songIndex", _currentSong.value?:0)
@@ -87,9 +82,9 @@ class MainViewModel( application: Application) : AndroidViewModel(application){
     }
 
     fun getAllSongs( p : String = path) : MutableList<String> {
-        var songs = mutableListOf<String>()
+        val songs = mutableListOf<String>()
         val home = File(p)
-        Timber.d("Loading currentSongs from " + path)
+        Timber.d("Loading .mp3 files from %s", path)
         if (home.listFiles(FileExtensionFilter()) != null) {
             for (file in home.listFiles(FileExtensionFilter())) {
                 songs.add(file.path)
@@ -99,31 +94,31 @@ class MainViewModel( application: Application) : AndroidViewModel(application){
         return songs
     }
 
-    fun getPlaylistSongs(name : String) : MutableList<String>{
-        var songs = mutableListOf<String>()
+    private fun getPlaylistSongs(name : String) : MutableList<String>{
+        val songs = mutableListOf<String>()
 
         if (name.equals("Wszystkie utwory")) return getAllSongs()
         else {
-            var jsonSongs = playlistData.getJSONArray("playlistNames")
+            val jsonSongs = playlistData.getJSONArray("playlistNames")
             if(jsonSongs != null) {
                 for (i in 0 until jsonSongs.length()) {
                     if ( jsonSongs.getJSONObject(i).getString("name").equals(name) ){
-                        var songsArr = jsonSongs.getJSONObject(i).getJSONArray("songs")
+                        val songsArr = jsonSongs.getJSONObject(i).getJSONArray("songs")
                         for ( j in 0 until songsArr.length())
                             songs.add(songsArr.getString(j))
                     }
                 }
             }
         }
-        Timber.d("Songs are " + songs.toString())
+        Timber.d("Found songs from playslist %s: %s", name, songs.toString())
 
         return songs
     }
 
     fun getPlaylistNames() : MutableList<String> {
-        var playlist = mutableListOf("Wybierz playlistę:", "Wszystkie utwory")
+        val playlist = mutableListOf("Wybierz playlistę:", "Wszystkie utwory")
 
-        var jsonNames = playlistData.getJSONArray("playlistNames")
+        val jsonNames = playlistData.getJSONArray("playlistNames")
         if(jsonNames != null) {
             for (i in 0 until jsonNames.length()) {
                 var name = jsonNames.getJSONObject(i).getString("name")
@@ -131,37 +126,36 @@ class MainViewModel( application: Application) : AndroidViewModel(application){
             }
         }
 
-        Timber.d("Playlists are " + playlist.toString())
+        Timber.d("Found playlists: %s", playlist.toString())
 
         return playlist
     }
 
     fun createNewPlaylist(name : String, songs : MutableList<Int>) {
-        Timber.d("Create playlist " + name + " with songs: " + songs.toString())
+        Timber.d("Create playlist %s with songs: %s", name, songs.toString())
         if(getPlaylistNames().contains(name)){
             throw Exception("Playlista o tej nazwie już istnieje!")
         }
         else{
-            var songsArray = JSONArray()
+            val songsArray = JSONArray()
             for ( index in songs ){
                 songsArray.put(getAllSongs()[index])
             }
-            var newPlaylist = JSONObject()
+            val newPlaylist = JSONObject()
             newPlaylist.put("name", name)
             newPlaylist.put("songs", songsArray)
             playlistData.getJSONArray("playlistNames").put(newPlaylist)
         }
-        Timber.d("JSON: " + playlistData.toString())
     }
 
     fun deletePlaylist(pos : Int){
-
-        var playlistName = getPlaylistNames()[pos + 2] // skipping first two positions
-        var jsonSongs = playlistData.getJSONArray("playlistNames")
+        // skipping first two positions - helper text and all songs cannot be deleted
+        val playlistName = getPlaylistNames()[pos + 2]
+        val jsonSongs = playlistData.getJSONArray("playlistNames")
         if(jsonSongs != null) {
             for (i in 0 until jsonSongs.length()) {
                 if ( jsonSongs.getJSONObject(i).getString("name").equals(playlistName) ){
-                    Timber.d("Removing " + jsonSongs.getJSONObject(i).getString("name"))
+                    Timber.d("Removing %s", jsonSongs.getJSONObject(i).getString("name"))
                     jsonSongs.remove(i)
                 }
             }
@@ -170,9 +164,9 @@ class MainViewModel( application: Application) : AndroidViewModel(application){
 
     fun addSongToPlaylist ( playlistName : String? ) {
         val songPath = currentPlaylist.value!![currentSong.value!!]
-        Timber.d("Adding " + songPath + " to " + playlistName)
+        Timber.d("Adding song %s to playlist %s", songPath, playlistName)
 
-        var jsonSongs = playlistData.getJSONArray("playlistNames")
+        val jsonSongs = playlistData.getJSONArray("playlistNames")
         if(jsonSongs != null) {
             for (i in 0 until jsonSongs.length()) {
                 if ( jsonSongs.getJSONObject(i).getString("name").equals(playlistName) ){

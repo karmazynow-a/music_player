@@ -1,7 +1,5 @@
 package com.example.musicplayer
 
-import android.content.Context
-import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -23,7 +21,7 @@ class SelectPathFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        var binding = inflate<FragmentSelectPathBinding>(
+        val binding = inflate<FragmentSelectPathBinding>(
             inflater,
             R.layout.fragment_select_path, container, false
         )
@@ -42,7 +40,7 @@ class SelectPathFragment : Fragment() {
         if(requestCode == 9999){
 
             val path = FileUtil.getFullPathFromTreeUri(data!!.data,context)
-            Timber.d("new path is" + path )
+            Timber.d("new path is %s", path )
             viewModel.setPath(path!!)
         }
         view!!.findNavController().navigate(R.id.action_selectPathFragment_to_playlistFragment)

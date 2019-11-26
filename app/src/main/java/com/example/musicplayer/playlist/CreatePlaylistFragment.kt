@@ -43,7 +43,7 @@ class CreatePlaylistFragment : Fragment() {
     }
 
     private fun createSongList () {
-        var songs = viewModel.getAllSongs()
+        val songs = viewModel.getAllSongs()
 
         val listItems = arrayOfNulls<String>(songs.size)
         for ( i in 0 until songs.size){
