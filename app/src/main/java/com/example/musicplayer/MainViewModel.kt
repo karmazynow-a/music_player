@@ -4,9 +4,11 @@ import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
 import android.media.MediaMetadataRetriever
+import android.os.Environment
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import kotlinx.android.synthetic.main.fragment_playlist.view.*
 import org.json.JSONArray
 import org.json.JSONObject
 import timber.log.Timber
@@ -47,7 +49,7 @@ class MainViewModel( application: Application) : AndroidViewModel(application){
     init {
         //get path from shared preferences
         sharedPref = application.getSharedPreferences(application.packageName, Context.MODE_PRIVATE)
-        path = sharedPref.getString("path", "/sdcard/")!!
+        path = sharedPref.getString("path",  Environment.getExternalStorageDirectory().path)!!  //"/sdcard/"
 
         if(sharedPref.getString("playlistData","").isNullOrEmpty()){
             //create new json object
@@ -82,15 +84,31 @@ class MainViewModel( application: Application) : AndroidViewModel(application){
     }
 
     fun getAllSongs( p : String = path) : MutableList<String> {
-        val songs = mutableListOf<String>()
+        var songs = mutableListOf<String>()
         val home = File(p)
         Timber.d("Loading .mp3 files from %s", path)
+        /*
         if (home.listFiles(FileExtensionFilter()) != null) {
             for (file in home.listFiles(FileExtensionFilter())) {
                 songs.add(file.path)
             }
         }
+        */
+        songs = scanFiles(home)
         songs.sortWith(compareBy { SongNameResolver.getSongName(it)})
+        return songs
+    }
+
+    private fun scanFiles(root : File) : MutableList<String> {
+        val songs = mutableListOf<String>()
+        val list = root.listFiles()
+        for ( file in list){
+            if( file.isDirectory){
+                songs.addAll(scanFiles(file))
+            } else if (file.name.endsWith(".mp3") || file.name.endsWith(".MP3")) {
+                songs.add(file.path)
+            }
+        }
         return songs
     }
 
