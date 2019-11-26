@@ -12,7 +12,8 @@
             tools:layout="@layout/fragment_player"
             android:orientation="vertical"
             android:background="@drawable/background_gradient"
-            >
+            android:gravity="center_horizontal|center_vertical"
+    >
 
         <ImageView
                 android:layout_width="wrap_content"
@@ -22,12 +23,13 @@
                 tools:ignore="Suspicious0dp"
                 android:layout_gravity="clip_horizontal|center|center_horizontal"
                 android:paddingStart="@dimen/cdPadding" android:paddingBottom="@dimen/cdPadding"
-                android:paddingTop="@dimen/cdPaddingTop" android:paddingEnd="@dimen/cdPadding"/>
+                android:paddingTop="@dimen/cdPadding" android:paddingEnd="@dimen/cdPadding"/>
 
         <TextView
                 android:text="@string/songNameDefault"
                 android:id="@+id/songName"
                 android:textSize="@dimen/songNameSize" style="@style/playerText"
+                android:maxLines="1"
                 android:maxLength="35"/>
 
         <TextView
@@ -35,6 +37,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/authorName" style="@style/playerText"
+                android:maxLength="35"
+                android:maxLines="1"
                 android:textSize="@dimen/authorTextSize"/>
 
         <SeekBar
@@ -49,6 +53,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:textAlignment="center" android:layout_gravity="center_horizontal"
+                android:paddingBottom="30dp"
                 android:gravity="center_horizontal|center_vertical">
 
             <ImageButton

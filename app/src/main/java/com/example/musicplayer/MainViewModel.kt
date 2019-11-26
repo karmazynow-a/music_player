@@ -65,7 +65,13 @@ class MainViewModel( application: Application) : AndroidViewModel(application){
 
         Timber.d("Current song index is %s and current playlist is %s",_currentSong.value , _currentPlaylistName.value)
 
-        _currentPlaylist.value = getAllSongs(path)
+        if (_currentPlaylistName.value.equals("Wszystkie utwory")){
+            _currentPlaylist.value = getAllSongs(path)
+        }
+        else {
+            _currentPlaylist.value = getPlaylistSongs( _currentPlaylistName.value!!)
+        }
+
         _isPlaying.value = false
         _isShuffle.value = false
     }
@@ -87,13 +93,6 @@ class MainViewModel( application: Application) : AndroidViewModel(application){
         var songs = mutableListOf<String>()
         val home = File(p)
         Timber.d("Loading .mp3 files from %s", path)
-        /*
-        if (home.listFiles(FileExtensionFilter()) != null) {
-            for (file in home.listFiles(FileExtensionFilter())) {
-                songs.add(file.path)
-            }
-        }
-        */
         songs = scanFiles(home)
         songs.sortWith(compareBy { SongNameResolver.getSongName(it)})
         return songs
@@ -102,11 +101,13 @@ class MainViewModel( application: Application) : AndroidViewModel(application){
     private fun scanFiles(root : File) : MutableList<String> {
         val songs = mutableListOf<String>()
         val list = root.listFiles()
-        for ( file in list){
-            if( file.isDirectory){
-                songs.addAll(scanFiles(file))
-            } else if (file.name.endsWith(".mp3") || file.name.endsWith(".MP3")) {
-                songs.add(file.path)
+        if (!list.isNullOrEmpty()) {
+            for (file in list) {
+                if (file.isDirectory) {
+                    songs.addAll(scanFiles(file))
+                } else if (file.name.endsWith(".mp3") || file.name.endsWith(".MP3")) {
+                    songs.add(file.path)
+                }
             }
         }
         return songs
@@ -196,9 +197,23 @@ class MainViewModel( application: Application) : AndroidViewModel(application){
     }
 
     fun setPlaylist(name : String){
-        _currentPlaylistName.value = name
-        _currentPlaylist.value = getPlaylistSongs(name)
-        _currentSong.value = 0
+        if(!_currentPlaylistName.value!!.equals(name)) {
+            _currentPlaylistName.value = name
+            _currentPlaylist.value = getPlaylistSongs(name)
+            if (currentSong.value!! >= currentPlaylist.value!!.size) {
+                _currentSong.value = 0
+            }
+
+            //handle song position changing
+            val currName = _currentPlaylist.value!![_currentSong.value!!]
+            if (isShuffle.value!!) {
+                _currentPlaylist.value!!.shuffle()
+                _currentSong.value = _currentPlaylist.value!!.indexOf(currName)
+            } else {
+                currentPlaylist.value!!.sortWith(compareBy { SongNameResolver.getSongName(it)})
+                _currentSong.value = _currentPlaylist.value!!.indexOf(currName)
+            }
+        }
     }
 
     fun setPath(path : String){
@@ -208,6 +223,7 @@ class MainViewModel( application: Application) : AndroidViewModel(application){
     }
 
     fun setCurrentSong ( index : Int ) {
+        Timber.d("Setting current track to %s", index)
         _currentSong.value = index
     }
 
@@ -220,8 +236,17 @@ class MainViewModel( application: Application) : AndroidViewModel(application){
         _isPlaying.value = v
     }
 
-    fun setIsShuffle ( v : Boolean ){
-        _isShuffle.value = v
+    fun setIsShuffle (){
+        val currName = _currentPlaylist.value!![_currentSong.value!!]
+        if(!_isShuffle.value!!){
+            _currentPlaylist.value!!.shuffle()
+            _currentSong.value = _currentPlaylist.value!!.indexOf(currName)
+            _isShuffle.value = true
+        } else {
+            currentPlaylist.value!!.sortWith(compareBy { SongNameResolver.getSongName(it) })
+            _currentSong.value = _currentPlaylist.value!!.indexOf(currName)
+            _isShuffle.value = false
+        }
     }
 }
 
@@ -230,7 +255,8 @@ class SongNameResolver{
     companion object{
         private var pathToName = mutableMapOf<String, String>()
         fun getSongName (path : String) : String{
-            if (!pathToName.containsKey(path)){
+            Timber.d("Path " + path)
+            if ( !path.isNullOrEmpty() && !pathToName.containsKey(path)){
                 var mediaMetadataRetriever = MediaMetadataRetriever()
                 mediaMetadataRetriever.setDataSource( path )
                 pathToName[path] = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE)?: getNameFromPath(path)
@@ -241,11 +267,5 @@ class SongNameResolver{
         fun getNameFromPath(name : String) : String {
             return name.split("/").last().split(".").first()
         }
-    }
-}
-
-internal class FileExtensionFilter : FilenameFilter {
-    override fun accept(dir: File, name: String): Boolean {
-        return name.endsWith(".mp3") || name.endsWith(".MP3")
     }
 }

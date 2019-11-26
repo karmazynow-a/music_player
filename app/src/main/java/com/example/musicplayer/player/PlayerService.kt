@@ -20,7 +20,6 @@ class PlayerService :  Service () {
     private var currentPlaylist : MutableList<String>
     private var currentPosition : Int
     private var isPrepared : Boolean
-    private var isShuffle : Boolean
     private var isReady : Boolean
     private val binder : IBinder
     private var durationHandler : Handler
@@ -28,7 +27,6 @@ class PlayerService :  Service () {
 
     init {
         isPrepared = false
-        isShuffle = false
         isReady = false
         currentPosition = 0
         currentPlaylist = mutableListOf()
@@ -79,9 +77,6 @@ class PlayerService :  Service () {
             val finalTime = mediaPlayer.duration
             i.putExtra("progress", songProgress * 100 / finalTime)
         }
-        else if (what.equals(SHUFFLE_CHANGED)) {
-            i.putExtra("isShuffle", isShuffle)
-        }
 
         //sendStickyBroadcast(i)
         sendBroadcast(i)
@@ -103,7 +98,11 @@ class PlayerService :  Service () {
             //load current song
             load()
         }
+    }
 
+    //in case of shuffle
+    fun updatePlaylist (pos : Int, playlist : MutableList<String>){
+        currentPlaylist = playlist
     }
 
     private fun load() {
@@ -127,12 +126,37 @@ class PlayerService :  Service () {
 
             isPrepared = false
             mediaPlayer.prepareAsync()
-
-
         } else {
             Timber.d("File %s not found ", songPath)
         }
 
+    }
+
+    private fun onPrepared() {
+        Timber.d("Player is prepared")
+
+        //set progress bar updating
+        val updateSeekBarTime = object: Runnable {
+            override fun run() {
+                try {
+                    if (mediaPlayer.isPlaying) {
+                        notifyChange(PROGRESS_CHANGED)
+                    }
+                    //repeat yourself that again in 100 miliseconds
+                    durationHandler.postDelayed(this, 100)
+                }
+                catch (e : IllegalStateException) {
+                    Timber.d("MusicPlayer is released - illegal state")
+                }
+            }
+        }
+        durationHandler.postDelayed(updateSeekBarTime, 100)
+
+        mediaPlayer.setOnCompletionListener{next()}
+        isPrepared = true
+        isReady = true
+        notifyChange(PREPARED_CHANGED)
+        start()
     }
 
     fun start(){
@@ -189,19 +213,6 @@ class PlayerService :  Service () {
         }
     }
 
-    fun shuffle(){
-        if (isShuffle) {
-            Timber.d("Playlist is sorted")
-            currentPlaylist.sortWith(compareBy { SongNameResolver.getSongName(it) })
-            isShuffle = false
-        } else {
-            Timber.d("Playlist is shuffled")
-            currentPlaylist.shuffle()
-            isShuffle = true
-        }
-        notifyChange(SHUFFLE_CHANGED)
-    }
-
     fun setProgress(progress : Int){
         val finalTime = mediaPlayer.duration
         val value = progress * finalTime / 100
@@ -213,40 +224,12 @@ class PlayerService :  Service () {
         notifyChange(PROGRESS_CHANGED)
     }
 
-    private fun onPrepared() {
-        Timber.d("Player is prepared")
-
-        //set progress bar updating
-        val updateSeekBarTime = object: Runnable {
-            override fun run() {
-                try {
-                    if (mediaPlayer.isPlaying) {
-                        notifyChange(PROGRESS_CHANGED)
-                    }
-                    //repeat yourself that again in 100 miliseconds
-                    durationHandler.postDelayed(this, 100)
-                }
-                catch (e : IllegalStateException) {
-                    Timber.d("MusicPlayer is released - illegal state")
-                }
-            }
-        }
-        durationHandler.postDelayed(updateSeekBarTime, 100)
-
-        mediaPlayer.setOnCompletionListener{next()}
-        isPrepared = true
-        isReady = true
-        notifyChange(PREPARED_CHANGED)
-        start()
-    }
-
     companion object {
         //state changes to be notified
         const val PROGRESS_CHANGED = "com.example.musicplayer.progresschanged"
         const val TRACK_CHANGED = "com.example.musicplayer.trackchanged"
         const val PREPARED_CHANGED = "com.example.musicplayer.preparedchanged"
         const val PLAYING_CHANGED = "com.example.musicplayer.playingchanged"
-        const val SHUFFLE_CHANGED = "com.example.musicplayer.shufflechanged"
         const val ALL = "com.example.musicplayer.all"
     }
 }

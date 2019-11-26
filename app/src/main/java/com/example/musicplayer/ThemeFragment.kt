@@ -49,7 +49,6 @@ class ThemeFragment : Fragment() {
         editor.apply()
         (activity as AppCompatActivity).recreate()
 
-        //TODO change depending in which fragment user was before
         view.findNavController().navigate(R.id.action_themeFragment_to_playerFragment)
     }
 }

@@ -2,8 +2,7 @@
 <resources>
     <dimen name="songNameSize">24sp</dimen>
     <dimen name="authorTextSize">18sp</dimen>
-    <dimen name="cdPadding">50dp</dimen>
-    <dimen name="cdPaddingTop">70dp</dimen>
+    <dimen name="cdPadding">40dp</dimen>
     <dimen name="cdSize">300dp</dimen>
     <dimen name="sideBtnSize">70dp</dimen>
     <dimen name="addsideBtnSize">50dp</dimen>

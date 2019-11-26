@@ -37,7 +37,6 @@ class PlaylistFragment : Fragment() {
             inflater,
             R.layout.fragment_playlist, container, false
         )
-
         viewModel = ViewModelProviders.of(requireActivity()).get(MainViewModel::class.java)
 
         val playlistNames = viewModel.getPlaylistNames()
@@ -96,12 +95,12 @@ class PlaylistFragment : Fragment() {
         super.onStop()
     }
 
-    override fun onDestroyView() {
+    override fun onDestroy() {
+        super.onDestroy()
         if (isBounded) {
             (activity as MainActivity).unbindService(connection)
             isBounded = false
         }
-        super.onDestroyView()
     }
 
     private var statusChange = object : BroadcastReceiver(){
@@ -114,11 +113,9 @@ class PlaylistFragment : Fragment() {
 
                 PlayerService.PLAYING_CHANGED -> {
                     if (intent.getBooleanExtra("isPlaying", false)){
-                        Timber.d("Preparing to be paused")
                         viewModel.setIsPlaying(true)
                         binding.miniPlayBtn.setImageResource(R.drawable.ic_mini_pause)
                     } else {
-                        Timber.d("Preparing to be played")
                         viewModel.setIsPlaying(false)
                         binding.miniPlayBtn.setImageResource(R.drawable.ic_mini_play)
                     }
@@ -161,15 +158,27 @@ class PlaylistFragment : Fragment() {
 
     private fun pause(){
         Timber.d("Pause")
-        service.stop()
+        if ( service.isReady() ){
+            service.stop()
+        }
     }
 
     private fun next(){
-        service.next()
+        if ( !service.isReady() ) {
+            service.open(viewModel.currentSong.value!! + 1, viewModel.currentPlaylist.value!!)
+        }
+        else{
+            service.next()
+        }
     }
 
     private fun prev(){
-        service.prev()
+        if ( !service.isReady() ) {
+            service.open(viewModel.currentSong.value!! - 1, viewModel.currentPlaylist.value!!)
+        }
+        else {
+            service.prev()
+        }
     }
 
     //*************************PLAYLIST SECTION

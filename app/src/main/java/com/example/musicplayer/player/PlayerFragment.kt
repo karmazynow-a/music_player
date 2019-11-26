@@ -89,7 +89,6 @@ class PlayerFragment : Fragment() {
         filter.addAction(PlayerService.PREPARED_CHANGED)
         filter.addAction(PlayerService.TRACK_CHANGED)
         filter.addAction(PlayerService.PLAYING_CHANGED)
-        filter.addAction(PlayerService.SHUFFLE_CHANGED)
         filter.addAction(PlayerService.ALL)
         (activity as MainActivity).registerReceiver(statusChange, filter)
     }
@@ -124,19 +123,6 @@ class PlayerFragment : Fragment() {
                     setSongInfo(intent.getStringExtra("path"))
                     viewModel.setCurrentSongFromPath(intent.getStringExtra("path"))
                     Timber.d("Current track is %s", viewModel.currentSong.value)
-                }
-
-                PlayerService.SHUFFLE_CHANGED -> {
-                    if (intent.getBooleanExtra("isShuffle", false)){
-                        viewModel.setIsShuffle(true)
-                        val value = TypedValue()
-                        context!!.theme.resolveAttribute (R.attr.colorAccent, value, true)
-                        binding.shuffleBtn.setColorFilter(value.data)
-                    }
-                    else {
-                        viewModel.setIsShuffle(false)
-                        binding.shuffleBtn.setColorFilter(R.color.btnBlack)
-                    }
                 }
 
                 PlayerService.PLAYING_CHANGED -> {
@@ -176,8 +162,7 @@ class PlayerFragment : Fragment() {
             val binder = (p1 as PlayerService.PlayerBinder)
             service = binder.getService()
             isBounded = true
-            Timber.d("Loading song %s", viewModel.currentSong.value)
-
+            Timber.d("SS Loading song %s", viewModel.currentSong.value)
             service.open(viewModel.currentSong.value!!, viewModel.currentPlaylist.value!!)
         }
 
@@ -211,7 +196,18 @@ class PlayerFragment : Fragment() {
     }
 
     private fun shuffle(){
-        service.shuffle()
+        viewModel.setIsShuffle()
+        service.updatePlaylist(viewModel.currentSong.value!!, viewModel.currentPlaylist.value!!)
+
+        //change button
+        if (viewModel.isShuffle.value!!){
+            val value = TypedValue()
+            context!!.theme.resolveAttribute (R.attr.colorAccent, value, true)
+            binding.shuffleBtn.setColorFilter(value.data)
+        }
+        else {
+            binding.shuffleBtn.setColorFilter(R.color.btnBlack)
+        }
     }
 
     private fun add(){
