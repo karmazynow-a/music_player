@@ -1,4 +1,4 @@
-package com.example.musicplayer.player
+package com.example.musicplayer.fragments
 
 import android.content.*
 import android.media.MediaMetadataRetriever
@@ -17,6 +17,9 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import com.example.musicplayer.*
 import com.example.musicplayer.databinding.FragmentPlayerBinding
+import com.example.musicplayer.services.PlayerService
+import com.example.musicplayer.viewModels.MainViewModel
+import com.example.musicplayer.viewModels.SongNameResolver
 import timber.log.Timber
 
 class PlayerFragment : Fragment() {

@@ -8,7 +8,7 @@
     <TableLayout android:layout_width="match_parent"
                  android:layout_height="match_parent"
                  android:gravity="center"
-                 tools:context=".ThemeFragment"
+                 tools:context=".fragments.ThemeFragment"
                  android:background="@color/themeBackground">
 
         <TableRow android:gravity="center_horizontal">

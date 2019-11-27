@@ -1,4 +1,4 @@
-package com.example.musicplayer.playlist
+package com.example.musicplayer.fragments
 
 import android.content.*
 import android.os.Bundle
@@ -15,7 +15,9 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.findNavController
 import com.example.musicplayer.*
 import com.example.musicplayer.databinding.FragmentPlaylistBinding
-import com.example.musicplayer.player.PlayerService
+import com.example.musicplayer.services.PlayerService
+import com.example.musicplayer.viewModels.MainViewModel
+import com.example.musicplayer.viewModels.SongNameResolver
 import timber.log.Timber
 
 

@@ -1,4 +1,4 @@
-package com.example.musicplayer;
+package com.example.musicplayer.utils;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;

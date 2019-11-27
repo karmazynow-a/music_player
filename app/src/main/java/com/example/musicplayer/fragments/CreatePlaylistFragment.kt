@@ -1,4 +1,4 @@
-package com.example.musicplayer.playlist
+package com.example.musicplayer.fragments
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -11,9 +11,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.findNavController
-import com.example.musicplayer.MainViewModel
+import com.example.musicplayer.viewModels.MainViewModel
 import com.example.musicplayer.R
-import com.example.musicplayer.SongNameResolver
+import com.example.musicplayer.viewModels.SongNameResolver
 import com.example.musicplayer.databinding.FragmentCreatePlaylistBinding
 
 

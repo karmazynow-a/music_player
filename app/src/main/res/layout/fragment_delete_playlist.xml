@@ -9,7 +9,7 @@
              android:layout_height="match_parent"
              android:orientation="vertical"
              tools:layout="@layout/fragment_delete_playlist"
-             tools:context=".playlist.DeletePlaylistFragment"
+             tools:context=".fragments.DeletePlaylistFragment"
              android:paddingTop="50dp"
              android:background="@drawable/background_gradient">
 

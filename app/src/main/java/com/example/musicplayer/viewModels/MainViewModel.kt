@@ -1,4 +1,4 @@
-package com.example.musicplayer
+package com.example.musicplayer.viewModels
 
 import android.app.Application
 import android.content.Context
@@ -8,12 +8,10 @@ import android.os.Environment
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import kotlinx.android.synthetic.main.fragment_playlist.view.*
 import org.json.JSONArray
 import org.json.JSONObject
 import timber.log.Timber
 import java.io.File
-import java.io.FilenameFilter
 import java.lang.Exception
 
 
@@ -94,7 +92,7 @@ class MainViewModel( application: Application) : AndroidViewModel(application){
         val home = File(p)
         Timber.d("Loading .mp3 files from %s", path)
         songs = scanFiles(home)
-        songs.sortWith(compareBy { SongNameResolver.getSongName(it)})
+        songs.sortWith(compareBy { SongNameResolver.getSongName(it) })
         return songs
     }
 
@@ -210,7 +208,11 @@ class MainViewModel( application: Application) : AndroidViewModel(application){
                 _currentPlaylist.value!!.shuffle()
                 _currentSong.value = _currentPlaylist.value!!.indexOf(currName)
             } else {
-                currentPlaylist.value!!.sortWith(compareBy { SongNameResolver.getSongName(it)})
+                currentPlaylist.value!!.sortWith(compareBy {
+                    SongNameResolver.getSongName(
+                        it
+                    )
+                })
                 _currentSong.value = _currentPlaylist.value!!.indexOf(currName)
             }
         }
@@ -243,7 +245,11 @@ class MainViewModel( application: Application) : AndroidViewModel(application){
             _currentSong.value = _currentPlaylist.value!!.indexOf(currName)
             _isShuffle.value = true
         } else {
-            currentPlaylist.value!!.sortWith(compareBy { SongNameResolver.getSongName(it) })
+            currentPlaylist.value!!.sortWith(compareBy {
+                SongNameResolver.getSongName(
+                    it
+                )
+            })
             _currentSong.value = _currentPlaylist.value!!.indexOf(currName)
             _isShuffle.value = false
         }
@@ -259,7 +265,9 @@ class SongNameResolver{
             if ( !path.isNullOrEmpty() && !pathToName.containsKey(path)){
                 var mediaMetadataRetriever = MediaMetadataRetriever()
                 mediaMetadataRetriever.setDataSource( path )
-                pathToName[path] = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE)?: getNameFromPath(path)
+                pathToName[path] = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE)?: getNameFromPath(
+                    path
+                )
             }
             return pathToName[path]!!
         }

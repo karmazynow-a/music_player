@@ -1,4 +1,4 @@
-package com.example.musicplayer.player
+package com.example.musicplayer.services
 
 import android.app.NotificationManager
 import android.app.Service
@@ -10,7 +10,7 @@ import android.os.Handler
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import com.example.musicplayer.R
-import com.example.musicplayer.SongNameResolver
+import com.example.musicplayer.viewModels.SongNameResolver
 import timber.log.Timber
 import java.io.File
 

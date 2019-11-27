@@ -14,9 +14,8 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.findNavController
 import androidx.navigation.ui.NavigationUI
 import com.example.musicplayer.databinding.ActivityMainBinding
-import com.example.musicplayer.player.PlayerService
+import com.example.musicplayer.services.PlayerService
 import com.google.android.material.navigation.NavigationView
-import java.util.jar.Manifest
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
