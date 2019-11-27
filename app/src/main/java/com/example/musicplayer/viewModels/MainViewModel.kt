@@ -88,10 +88,9 @@ class MainViewModel( application: Application) : AndroidViewModel(application){
     }
 
     fun getAllSongs( p : String = path) : MutableList<String> {
-        var songs = mutableListOf<String>()
         val home = File(p)
         Timber.d("Loading .mp3 files from %s", path)
-        songs = scanFiles(home)
+        val songs = scanFiles(home)
         songs.sortWith(compareBy { SongNameResolver.getSongName(it) })
         return songs
     }
@@ -203,17 +202,22 @@ class MainViewModel( application: Application) : AndroidViewModel(application){
             }
 
             //handle song position changing
-            val currName = _currentPlaylist.value!![_currentSong.value!!]
-            if (isShuffle.value!!) {
-                _currentPlaylist.value!!.shuffle()
-                _currentSong.value = _currentPlaylist.value!!.indexOf(currName)
-            } else {
-                currentPlaylist.value!!.sortWith(compareBy {
-                    SongNameResolver.getSongName(
-                        it
-                    )
-                })
-                _currentSong.value = _currentPlaylist.value!!.indexOf(currName)
+            try {
+                val currName = _currentPlaylist.value!![_currentSong.value!!]
+                if (isShuffle.value!!) {
+                    _currentPlaylist.value!!.shuffle()
+                    _currentSong.value = _currentPlaylist.value!!.indexOf(currName)
+                } else {
+                    currentPlaylist.value!!.sortWith(compareBy {
+                        SongNameResolver.getSongName(
+                            it
+                        )
+                    })
+                    _currentSong.value = _currentPlaylist.value!!.indexOf(currName)
+                }
+            }
+            catch( e : IndexOutOfBoundsException){
+                Timber.v("Playlist is empty")
             }
         }
     }
@@ -261,7 +265,6 @@ class SongNameResolver{
     companion object{
         private var pathToName = mutableMapOf<String, String>()
         fun getSongName (path : String) : String{
-            Timber.d("Path " + path)
             if ( !path.isNullOrEmpty() && !pathToName.containsKey(path)){
                 var mediaMetadataRetriever = MediaMetadataRetriever()
                 mediaMetadataRetriever.setDataSource( path )

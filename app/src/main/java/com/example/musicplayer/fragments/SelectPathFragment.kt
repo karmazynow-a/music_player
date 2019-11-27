@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProviders
 import android.content.Intent
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil.inflate
 import androidx.navigation.findNavController
 import com.example.musicplayer.viewModels.MainViewModel
@@ -40,11 +41,18 @@ class SelectPathFragment : Fragment() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if(requestCode == 9999){
+        super.onActivityResult(requestCode, resultCode, data)
+        try {
+            if (requestCode == 9999) {
 
-            val path = FileUtil.getFullPathFromTreeUri(data!!.data,context)
-            Timber.d("new path is %s", path )
-            viewModel.setPath(path!!)
+                val path = FileUtil.getFullPathFromTreeUri(data!!.data, context) ?: ""
+                if (path.isNotEmpty()) {
+                    viewModel.setPath(path)
+                }
+            }
+        }
+        catch (e:NullPointerException){
+            Timber.v("Nie wybrano nowego folderu")
         }
         view!!.findNavController().navigate(R.id.action_selectPathFragment_to_playlistFragment)
     }

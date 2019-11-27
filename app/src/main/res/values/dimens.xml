@@ -13,4 +13,5 @@
     <dimen name="progressBarPadding">20dp</dimen>
     <dimen name="themeCD">100dp</dimen>
     <dimen name="themeCDpadding">10dp</dimen>
+    <dimen name="topPadding">50dp</dimen>
 </resources>

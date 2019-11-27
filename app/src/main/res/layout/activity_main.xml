@@ -29,7 +29,7 @@
                 android:layout_gravity="start"
                 android:background="@color/themeBackground"
                 app:itemTextColor="@android:color/secondary_text_dark"
-                android:paddingTop="35dp"
+                android:paddingTop="@dimen/topPadding"
                 app:menu="@menu/settings_drawer" />
 
     </androidx.drawerlayout.widget.DrawerLayout>

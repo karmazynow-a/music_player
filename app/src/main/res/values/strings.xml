@@ -7,7 +7,6 @@
     <string name="songNameDefault">Nazwa</string>
     <string name="authorNameDefault">Nieznany</string>
     <string name="preference_file_key">preferences</string>
-
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="spinnerHelp">Wybierz playlistę</string>
     <string name="chooseSongsHelp">Wybierz utwory:</string>
@@ -15,4 +14,11 @@
     <string name="newPlaylistNameHint">Podaj nazwę playlisty</string>
     <string name="deletePlaylistHelp">Wybierz playlistę do usunięcia:</string>
     <string name="deletePlaylistBtnDescp">Usuń playlistę</string>
+    <string name="cdImgDesc">cd image</string>
+    <string name="shuffleBtnDesc">shuffle button</string>
+    <string name="prevBtnDesc">previous song button</string>
+    <string name="playBtnDesc">play button</string>
+    <string name="nextBtnDesc">next song button</string>
+    <string name="addBtnDesc">add to playlist button</string>
+    <string name="chooseThemeImgDesc">cd with theme</string>
 </resources>

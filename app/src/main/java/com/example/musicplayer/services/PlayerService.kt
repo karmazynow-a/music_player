@@ -101,7 +101,7 @@ class PlayerService :  Service () {
     }
 
     //in case of shuffle
-    fun updatePlaylist (pos : Int, playlist : MutableList<String>){
+    fun updatePlaylist (playlist : MutableList<String>){
         currentPlaylist = playlist
     }
 

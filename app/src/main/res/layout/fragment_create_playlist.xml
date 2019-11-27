@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools">
+        xmlns:tools="http://schemas.android.com/tools">
     <data>
 
     </data>
@@ -12,7 +12,9 @@
             tools:layout="@layout/fragment_create_playlist"
             tools:context=".fragments.CreatePlaylistFragment"
             android:background="@drawable/background_gradient"
-            android:paddingTop="50dp" android:gravity="center_horizontal">
+            android:clickable="true"
+            android:focusableInTouchMode="true"
+            android:paddingTop="@dimen/topPadding" android:gravity="center_horizontal">
 
         <EditText
                 android:inputType="textPersonName"
@@ -39,7 +41,6 @@
                 android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"
                 android:id="@+id/createPlaylistBtn"/>
-
 
     </RelativeLayout>
 </layout>

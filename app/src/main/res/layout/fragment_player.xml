@@ -11,6 +11,7 @@
             tools:context=".fragments.PlayerFragment"
             tools:layout="@layout/fragment_player"
             android:orientation="vertical"
+            android:paddingTop="@dimen/topPadding"
             android:background="@drawable/background_gradient"
             android:gravity="center_horizontal|center_vertical"
     >
@@ -23,7 +24,8 @@
                 tools:ignore="Suspicious0dp"
                 android:layout_gravity="clip_horizontal|center|center_horizontal"
                 android:paddingStart="@dimen/cdPadding" android:paddingBottom="@dimen/cdPadding"
-                android:paddingTop="@dimen/cdPadding" android:paddingEnd="@dimen/cdPadding"/>
+                android:paddingTop="@dimen/cdPadding" android:paddingEnd="@dimen/cdPadding"
+                android:contentDescription="@string/cdImgDesc"/>
 
         <TextView
                 android:text="@string/songNameDefault"
@@ -59,26 +61,31 @@
             <ImageButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" app:srcCompat="@drawable/ic_shuffle"
-                    android:id="@+id/shuffleBtn" android:layout_weight="1" style="@style/btnPlayerStyle"/>
+                    android:id="@+id/shuffleBtn" android:layout_weight="1" style="@style/btnPlayerStyle"
+                    android:contentDescription="@string/shuffleBtnDesc"/>
 
             <ImageButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" app:srcCompat="@drawable/ic_previous"
-                    android:id="@+id/prevBtn" android:layout_weight="1" style="@style/btnPlayerStyle"/>
+                    android:id="@+id/prevBtn" android:layout_weight="1" style="@style/btnPlayerStyle"
+                    android:contentDescription="@string/prevBtnDesc"/>
 
             <ImageButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" app:srcCompat="@drawable/ic_play"
-                    android:id="@+id/playBtn" android:layout_weight="1" style="@style/btnPlayerStyle"/>
+                    android:id="@+id/playBtn" android:layout_weight="1" style="@style/btnPlayerStyle"
+                    android:contentDescription="@string/playBtnDesc"/>
             <ImageButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" app:srcCompat="@drawable/ic_next"
-                    android:id="@+id/nextBtn" android:layout_weight="1" style="@style/btnPlayerStyle"/>
+                    android:id="@+id/nextBtn" android:layout_weight="1" style="@style/btnPlayerStyle"
+                    android:contentDescription="@string/nextBtnDesc"/>
 
             <ImageButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" app:srcCompat="@drawable/ic_add"
-                    android:id="@+id/addBtn" android:layout_weight="1" style="@style/btnPlayerStyle"/>
+                    android:id="@+id/addBtn" android:layout_weight="1" style="@style/btnPlayerStyle"
+                    android:contentDescription="@string/addBtnDesc"/>
         </TableRow>
 
     </LinearLayout>

@@ -200,7 +200,7 @@ class PlayerFragment : Fragment() {
 
     private fun shuffle(){
         viewModel.setIsShuffle()
-        service.updatePlaylist(viewModel.currentSong.value!!, viewModel.currentPlaylist.value!!)
+        service.updatePlaylist(viewModel.currentPlaylist.value!!)
 
         //change button
         if (viewModel.isShuffle.value!!){

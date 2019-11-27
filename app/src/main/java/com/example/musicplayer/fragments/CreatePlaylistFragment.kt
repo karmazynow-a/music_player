@@ -15,7 +15,8 @@ import com.example.musicplayer.viewModels.MainViewModel
 import com.example.musicplayer.R
 import com.example.musicplayer.viewModels.SongNameResolver
 import com.example.musicplayer.databinding.FragmentCreatePlaylistBinding
-
+import android.content.Context
+import android.view.inputmethod.InputMethodManager
 
 class CreatePlaylistFragment : Fragment() {
     private lateinit var binding : FragmentCreatePlaylistBinding
@@ -36,6 +37,14 @@ class CreatePlaylistFragment : Fragment() {
         createSongList()
 
         binding.createPlaylistBtn.setOnClickListener{ createPlaylist() }
+        binding.newPlaylistName.setOnFocusChangeListener{ view : View, hasFocus : Boolean ->
+            if (!hasFocus) {
+                //hide keyboard
+                val inputMethodManager = activity!!.getSystemService(Context.INPUT_METHOD_SERVICE) as
+                        InputMethodManager
+                inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
+            }
+        }
 
         (activity as AppCompatActivity).supportActionBar?.title = "Stwórz playlistę"
 
