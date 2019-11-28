@@ -176,6 +176,12 @@ class MainViewModel( application: Application) : AndroidViewModel(application){
                 }
             }
         }
+
+        if (_currentPlaylistName.value == playlistName){
+            _currentPlaylistName.value = "Wszystkie utwory"
+            _currentPlaylist.value = getAllSongs(path)
+            _currentSong.value = 0
+        }
     }
 
     fun addSongToPlaylist ( playlistName : String? ) {

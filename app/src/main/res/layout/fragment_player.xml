@@ -11,7 +11,6 @@
             tools:context=".fragments.PlayerFragment"
             tools:layout="@layout/fragment_player"
             android:orientation="vertical"
-            android:paddingTop="@dimen/topPadding"
             android:background="@drawable/background_gradient"
             android:gravity="center_horizontal|center_vertical"
     >
